@@ -1,0 +1,78 @@
+/* Contenedor principal */
+.profile-container {
+  max-width: 600px;
+  margin: 10px 0;
+  padding: 20px;
+  border: 1px solid #999;
+  background: #f9f9f9;
+}
+
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Inputs y botones */
+input,
+button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input:not([readonly]) {
+  background-color: #fff;
+  border: 1px solid #007bff;
+}
+
+button {
+  background-color: var(--2nd-color);
+  color: white;
+  font-weight: 300;
+  cursor: pointer;
+  border: none;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Mensajes de error */
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.875em;
+}
+
+/* Contenedor de la foto de perfil */
+.display-flex-center {
+  display: flex;
+  align-items: center; /* Alinear elementos verticalmente */
+  justify-content: space-between; /* Espaciado entre los elementos */
+  gap: 10px; /* Espaciado entre el label y la imagen */
+  padding-bottom: 20px;
+}
+
+/* Estilo para el label */
+.display-flex-center label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  flex: 1; /* 1/4 del ancho total (aproximadamente, considerando la suma de las proporciones) */
+  max-width: 25%; /* Limitar el ancho máximo a 25% del contenedor */
+  text-align: left; /* Alinear el texto del label a la izquierda */
+}
+
+/* Estilo para la imagen */
+.display-flex-center .profile-picture-preview {
+  flex: 3; /* 3/4 del ancho total */
+  max-width: 75%; /* Limitar el ancho máximo a 75% del contenedor */
+  height: auto; /* Mantener la proporción de la imagen */
+  object-fit: cover; /* Ajustar la imagen si es necesario */
+  margin-left: auto; /* Separar la imagen del label */
+  margin-top: 10px;
+  border-radius: 50%;
+  /* border: 2px solid #ccc; */
+}

@@ -1,0 +1,81 @@
+<section class="info-container" #infoContainer>
+    <header class="info-header">
+        <button class="back-button" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i> Volver
+        </button>
+    </header>
+
+    <div class="info-content">
+        <p>
+            La sección de "Sobre mí" en un currículum vitae (CV) es una breve introducción personal que permite al
+            reclutador conocer rápidamente quién eres, cuál es tu perfil profesional y qué te motiva. Es una oportunidad
+            para destacar tus fortalezas, experiencias relevantes, y tus objetivos profesionales en unas pocas líneas.
+        </p>
+
+        <div>
+            <h4>¿Para qué sirve la sección "Sobre mí"?</h4>
+            <ul>
+                <li>Dar una primera impresión positiva y profesional</li>
+                <li>Resumir tu trayectoria o experiencia clave</li>
+                <li>Comunicar tus habilidades más destacadas</li>
+                <li>Mostrar tu motivación o interés por el puesto o sector</li>
+                <li>Personalizar tu CV y diferenciarte de otros candidatos</li>
+            </ul>
+        </div>
+
+        <div>
+            <h4>Consejos para redactar un buen "Sobre mí"</h4>
+            <ul>
+                <li>Sea breve y conciso: Limítate a 3-5 líneas.</li>
+                <li>Usa un tono profesional y positivo.</li>
+                <li>Evita clichés y frases genéricas.</li>
+                <li>Adapta el contenido al puesto al que aplicas.</li>
+                <li>Revisa la ortografía y gramática.</li>
+            </ul>
+        </div>
+
+        <div>
+            <h4>¿Qué información debe incluir?</h4>
+            <ul>
+                <li>Tu profesión o área de especialización. <br>
+                    Ej.: Ingeniero industrial, Diseñador gráfico, Desarrollador web, etc.</li>
+                <li>Años de experiencia o logros relevantes.</li>
+                <li>Habilidades clave o fortalezas.</li>
+                <li>Objetivo profesional o motivación laboral.</li>
+                <li>Rasgos personales que aporten al puesto (opcional).</li>
+            </ul>
+        </div>
+
+        <div class="examples">
+            <h4>Ejemplos prácticos que los reclutadores aprecian para diferentes perfiles:</h4>
+            <ul>
+                <li style="text-align: justify;"><strong>Con experiencia:</strong><br>
+                    Profesional en Marketing Digital con más de 5 años de experiencia en el diseño de campañas
+                    publicitarias, posicionamiento SEO y gestión de redes sociales. Enfocado en resultados, con
+                    habilidades analíticas y gran capacidad para trabajar en equipo. Busco seguir desarrollándome en un
+                    entorno creativo y dinámico.</li><br>
+                <li><strong>Perfil junior:</strong><br>
+                    Recién graduado en Ingeniería de Sistemas con fuertes conocimientos en desarrollo web, bases de
+                    datos y análisis de datos. Comprometido, curioso y con gran capacidad de aprendizaje. Interesado en
+                    formar parte de proyectos tecnológicos innovadores donde pueda aportar y seguir creciendo.</li><br>
+                <li><strong>Cambio de carrera:</strong><br>
+                    Profesional con experiencia en atención al cliente, actualmente enfocado en transición hacia el área
+                    de UX/UI. Cuento con formación en diseño centrado en el usuario y prototipado. Busco aplicar mis
+                    habilidades interpersonales y mi pasión por la tecnología en el desarrollo de experiencias digitales
+                    efectivas.</li><br>
+                <li><strong>Enfocado a liderazgo:</strong><br>
+                    Líder de equipos con más de 10 años en el sector logístico. Especialista en optimización de
+                    procesos, gestión de inventarios y coordinación operativa. Me apasiona crear entornos de trabajo
+                    eficientes y motivadores que impulsen resultados tangibles.</li><br>
+                <li><strong>Creativo:</strong><br>
+                    Diseñador gráfico con enfoque en branding y diseño editorial. Experiencia trabajando con agencias y
+                    clientes internacionales. Detallista, creativo y apasionado por contar historias visuales que
+                    conecten con las personas.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<button class="back-to-top" (click)="scrollToTop()" [class.visible]="showBackToTop">
+    <i class="fas fa-arrow-up"></i>
+</button>

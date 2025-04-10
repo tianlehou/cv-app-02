@@ -1,0 +1,20 @@
+<!-- Icono para abrir el menú -->
+<span class="sidebar-icon" (click)="toggleMenu()">☰</span>
+
+<!-- Menú lateral -->
+<div class="sidebar-menu" [class.open]="isMenuOpen" (click)="preventClose($event)">
+  <!-- Ícono de cierre -->
+  <div class="close-icon" (click)="toggleMenu()">
+    <span>←</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a routerLink="/home" (click)="toggleMenu()">Inicio</a></li>
+      <li><a routerLink="/suscripciones" (click)="toggleMenu()">Suscripciones</a></li>
+      <li><a href="#" (click)="logout()">Cerrar Sesión</a></li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Capa para detectar clics fuera del menú -->
+<div class="overlay" *ngIf="isMenuOpen" (click)="toggleMenu()"></div>

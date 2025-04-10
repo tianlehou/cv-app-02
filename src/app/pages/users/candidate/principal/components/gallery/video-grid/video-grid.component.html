@@ -1,0 +1,45 @@
+<div class="gallery-grid">
+    <!-- mostrar total de espacio subido -->
+    <div class="gallery-info">
+        <span>Total de espacio utilizado: {{ state.totalUploadedMB | number:'1.2-2' }} MB</span>
+    </div>
+    <!-- Upload Button & Progress -->
+    <div class="upload-container">
+        <div *ngIf="state.uploadProgress === null; else progressTemplate" class="upload-button">
+            <label for="video-upload">
+                <i class="fas fa-plus"></i> Subir video
+            </label>
+            <input id="video-upload" type="file" accept="video/*" hidden (click)="$event.stopPropagation()"
+                (change)="onFileSelected($event)">
+        </div>
+        <ng-template #progressTemplate>
+            <div class="upload-progress">
+                <div class="progress-bar" [ngStyle]="{ 'width': state.uploadProgress + '%' }">
+                    {{ state.uploadProgress }}%
+                </div>
+                <div class="progress-size">
+                    {{ state.uploadedSize | filesize }} de {{ state.totalSize | filesize }}
+                </div>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Videos Grid -->
+    <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item" [ngClass]="{'expanded': state.expandedStates[video]}">
+        <video controls #videoPlayer>
+            <source [src]="video" type="video/mp4">
+            Tu navegador no soporta videos.
+        </video>
+        <button class="toggle-button" (click)="toggleExpansion(video)">
+            <i class="fas" [ngClass]="state.expandedStates[video] ? 'fa-compress' : 'fa-expand'"></i>
+        </button>
+        <button class="delete-button" (click)="confirmDeleteVideo(video)">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="state.isLoading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+</div>
