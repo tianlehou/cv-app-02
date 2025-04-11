@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { FirebaseService } from '../../../../../../shared/services/firebase.service';
+import { Subscription } from 'rxjs';
 import { User } from '@angular/fire/auth';
+import { FirebaseService } from '../../../../../../shared/services/firebase.service';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-profile-picture',
@@ -19,8 +21,28 @@ export class ProfilePictureComponent {
     }
   }
   profilePictureUrl: string | null = null;
+  private subscription!: Subscription;
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService,
+    private profileService: ProfileService
+  ) {}
+
+  ngOnInit(): void {
+    this.subscription = this.profileService.profilePictureUpdated$.subscribe(
+      (newUrl) => {
+        if (newUrl) {
+          this.profilePictureUrl = newUrl;
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
   private async loadUserData(userEmailKey: string): Promise<void> {
     try {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
@@ -23,6 +23,7 @@ export class EditAboutMeComponent implements OnInit {
   showSaveButton = false;
   originalData: { [key: string]: any } = {};
   showInfoComponent = false;
+  @Output() backToPrincipal = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -55,6 +56,11 @@ export class EditAboutMeComponent implements OnInit {
                             this.profileForm.get('aboutMe')?.value !== this.originalData['aboutMe'];
       }
     });
+  }
+
+  onClose(): void {
+    console.log('Emitting backToPrincipal desde edit-about-me');
+    this.backToPrincipal.emit();
   }
 
   // Método para inicializar el formulario

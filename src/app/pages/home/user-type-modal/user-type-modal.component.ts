@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,21 +14,36 @@ export class UserTypeModalComponent {
 
   openModal() {
     this.isVisible = true;
+    document.body.classList.add('modal-open');
   }
 
   closeModal() {
     this.isVisible = false;
+    document.body.classList.remove('modal-open');
+    const backdrops = document.getElementsByClassName('modal-backdrop');
+    while (backdrops.length > 0) {
+      backdrops[0].remove();
+    }
   }
 
   selectUserType(type: 'candidate' | 'company') {
     this.userTypeSelected.emit(type);
     this.closeModal();
-    setTimeout(() => { // ← Añade este timeout
-      document.body.classList.remove('modal-open');
-      const backdrops = document.getElementsByClassName('modal-backdrop');
-      while (backdrops.length > 0) {
-        backdrops[0].remove();
-      }
-    }, 100);
+  }
+
+  // Maneja el clic fuera del modal
+  onBackdropClick(event: MouseEvent) {
+    const modalContent = document.querySelector('.modal-content');
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
+
+  // Cierra el modal con la tecla Escape
+  @HostListener('document:keydown.escape', ['$event'])
+  onKeydownHandler(event: KeyboardEvent) {
+    if (this.isVisible) {
+      this.closeModal();
+    }
   }
 }

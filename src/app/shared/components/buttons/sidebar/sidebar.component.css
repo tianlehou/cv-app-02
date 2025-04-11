@@ -1,3 +1,4 @@
+/* sidebar.component.css */
 /* Icono de apertura */
 .sidebar-icon {
   color: #333;
@@ -10,45 +11,122 @@
 /* Menú lateral */
 .sidebar-menu {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   top: 0;
   left: 0;
-  width: 200px;
+  width: 250px;
   height: 100%;
-  background-color: #222;
-  color: white;
-  padding: 20px;
+  background: linear-gradient(180deg, var(--clr-white), var(--bg-light));
+  color: var(--text-color);
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
-  z-index: 999;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid var(--bg-light);
+  z-index: 9999;
 }
 
 .sidebar-menu.open {
   transform: translateX(0);
 }
 
-.sidebar-menu nav ul {
-  list-style: none;
-  padding: 0;
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 20px;
+  background: var(--clr-white);
+  border-bottom: 2px solid var(--bg-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-menu nav ul li {
-  margin: 20px 0;
-}
-
-.sidebar-menu nav ul li a {
-  color: white;
-  text-decoration: none;
-  font-size: 18px;
+.sidebar-title {
+  display: flex;
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 10px 20px;
+  color: var(--text-color-light);
 }
 
 /* Ícono de cierre */
 .close-icon {
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  margin-bottom: 20px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  border: 5px dashed var(--clr-red);
+  border-radius: 50%;
+  padding: 15px;
+  color: var(--clr-red);
+  font-size: 2rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease-in-out;
+}
+
+.close-icon:hover {
+  transform: rotate(180deg);
+}
+
+.main-menu {
+  flex-grow: 1;
+
+}
+
+.sidebar-menu nav {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 70px);
+}
+
+.sidebar-menu nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu nav ul:hover {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu nav ul li {
+  margin: 10px 10px;
+  padding: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-menu nav ul li:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-menu nav ul li a {
+  display: flex;
+  align-items: center;
+  color: var(--text-color-light);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 15px 25px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-menu nav ul li a:hover {
+  background: linear-gradient(90deg, rgba(var(--clr-blue), 0.1) 0%, transparent 100%);
+  color: var(--clr-blue-dark);
+}
+
+.sidebar-menu nav ul li a i {
+  margin-right: 15px;
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
 }
 
 /* Capa de fondo para cerrar el menú al hacer clic */
@@ -60,4 +138,16 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.logout-menu li {
+  margin-top: 20px; /* Espacio adicional arriba del botón */
+  background-color: white;
+  font-weight: 500;
+}
+
+.logout-menu li span{
+  color: var(--clr-red);
+  font-weight: 500;
 }

@@ -35,7 +35,8 @@ export class CvGridComponent implements OnInit {
   @Input() currentUser: User | null = null;
   userEmailKey: string | null = null;
   selectedComponent: string | null = null;
-  showGalleryGrid = false; // propiedad para controlar la visibilidad
+  showGalleryGrid = false;
+  showPrincipalSection = true;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -51,7 +52,8 @@ export class CvGridComponent implements OnInit {
 
   onOptionSelected(option: string) {
     this.selectedComponent = option;
-    this.showGalleryGrid = true; // Mostrar gallery-grid cuando se selecciona una opción
+    this.showGalleryGrid = true;
+    this.showPrincipalSection = false;
     this.cdr.detectChanges();
   }
 
@@ -64,6 +66,20 @@ export class CvGridComponent implements OnInit {
   resetView() {
     this.selectedComponent = null;
     this.showGalleryGrid = false;
+    this.showPrincipalSection = true;
     this.cdr.detectChanges();
+  }
+
+  handleBackToPrincipal() {
+    console.log('Recibido backToPrincipal - showGalleryGrid:', this.showGalleryGrid);
+    this.selectedComponent = null;
+    this.showGalleryGrid = false;
+    this.showPrincipalSection = true;
+    this.cdr.detectChanges();
+    
+    // Opcional: Si necesitas forzar actualización de vista
+    setTimeout(() => {
+      this.cdr.markForCheck();
+    });
   }
 }

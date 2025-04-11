@@ -14,8 +14,11 @@ import {
   getDownloadURL,
   deleteObject,
 } from '@angular/fire/storage';
+import { ProfileService } from '../../.../../../../../../services/profile.service';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
+import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
+import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 
 @Component({
   selector: 'app-edit-profile-picture',
@@ -33,7 +36,10 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private storage: Storage,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private profileService: ProfileService,
+    private toastService: ToastService,
+    private confirmationModalService: ConfirmationModalService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,7 +71,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     if (!this.userEmailKey) return;
 
     try {
-      const userData = await this.firebaseService.getUserData(this.userEmailKey);
+      const userData = await this.firebaseService.getUserData(this.userEmailKey!);
 
       if (userData?.profileData?.multimedia?.picture?.profilePicture) {
         const timestamp = new Date().getTime();
@@ -76,7 +82,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
       }
     } catch (error) {
       console.error('Error cargando datos:', error);
-      alert('No se pudo cargar la imagen actual');
+      this.toastService.show('No se pudo cargar la imagen actual', 'error');
     }
   }
 
@@ -96,14 +102,27 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
   async onSubmit(): Promise<void> {
     if (!this.selectedFile) {
-      alert('Selecciona una imagen válida');
+      this.toastService.show('Selecciona una imagen válida', 'warning');
       return;
     }
     if (!this.userEmailKey || !this.currentUser?.email) {
-      alert('Debes iniciar sesión para guardar cambios');
+      this.toastService.show('Debes iniciar sesión para guardar cambios', 'error');
       return;
     }
 
+    this.confirmationModalService.show(
+      {
+        title: 'Confirmar Cambio',
+        message: '¿Estás seguro de que deseas actualizar tu foto de perfil?',
+        confirmText: 'Sí, actualizar',
+        cancelText: 'Cancelar'
+      },
+      () => this.updateProfilePicture(),
+      () => this.toastService.show('Cambio cancelado', 'info')
+    );
+  }
+
+  private async updateProfilePicture(): Promise<void> {
     try {
       const PROFILE_PIC_NAME = 'profile-picture.jpg';
       const storageRef = ref(
@@ -120,37 +139,46 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
       }
 
       // 2. Subir la nueva imagen
-      await uploadBytes(storageRef, this.selectedFile);
+      if (this.selectedFile) {
+        await uploadBytes(storageRef, this.selectedFile);
+      } else {
+        throw new Error('No file selected for upload');
+      }
       const downloadURL = await getDownloadURL(storageRef);
 
       // 3. Obtener datos actuales del usuario
-      const userData = await this.firebaseService.getUserData(this.userEmailKey);
+      const userData = await this.firebaseService.getUserData(this.userEmailKey!);
       
       // 4. Crear objeto actualizado manteniendo todos los datos existentes
       const updatedData = {
         profileData: {
-          ...userData?.profileData || {}, // Mantener todos los datos existentes
+          ...(userData?.profileData || {}),
           multimedia: {
-            ...userData?.profileData?.multimedia || {},
+            ...(userData?.profileData?.multimedia || {}),
             picture: {
-              ...userData?.profileData?.multimedia?.picture || {},
-              profilePicture: downloadURL // Solo actualizar este campo
-            }
-          }
-        }
+              ...(userData?.profileData?.multimedia?.picture || {}),
+              profilePicture: downloadURL,
+            },
+          },
+        },
       };
 
       // 5. Actualizar en Firebase
-      await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
+      if (this.currentUser?.email) {
+        await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
+      } else {
+        throw new Error('User email is null or undefined');
+      }
+      // Notifica el cambio
+      this.profileService.notifyProfilePictureUpdate(downloadURL);
 
-      alert('¡Foto actualizada correctamente!');
+      this.toastService.show('¡Foto actualizada correctamente!', 'success');
       await this.loadUserData();
     } catch (error) {
       console.error('Error:', error);
-      alert(
-        `Error al guardar: ${
-          error instanceof Error ? error.message : 'Intenta nuevamente'
-        }`
+      this.toastService.show(
+        `Error al guardar: ${error instanceof Error ? error.message : 'Intenta nuevamente'}`,
+        'error'
       );
     }
   }

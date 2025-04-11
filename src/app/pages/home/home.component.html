@@ -23,6 +23,7 @@
       *ngIf="currentCandidateView === 'login'"
       (showRegister)="showRegister()"
       (showForgotPassword)="showForgotPassword()"
+      (showHome)="showHomeSection = true; showCandidateSection = false"
     ></app-candidate-login>
     
     <app-candidate-register 

@@ -1,8 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
+import { ProfileService } from '../../../../../../services/profile.service';
 import { User } from '@angular/fire/auth';
+import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
+import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-personal-data',
@@ -16,9 +24,21 @@ export class EditPersonalDataComponent implements OnInit {
   profileForm!: FormGroup;
   editableFields: { [key: string]: boolean } = {};
 
+  // Diccionario para nombres descriptivos de campos
+  private fieldNames: { [key: string]: string } = {
+    fullName: 'Nombre Completo',
+    profesion: 'Profesión',
+    phone: 'Teléfono',
+    editableEmail: 'Correo Electrónico',
+    direction: 'Dirección',
+  };
+
   constructor(
     private fb: FormBuilder,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private profileService: ProfileService,
+    private confirmationModal: ConfirmationModalService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +88,7 @@ export class EditPersonalDataComponent implements OnInit {
     try {
       const userEmailKey = this.formatEmailKey(this.currentUser.email);
       const userData = await this.firebaseService.getUserData(userEmailKey);
-      
+
       this.profileForm.patchValue({
         fullName: userData?.fullName || '',
         profesion: userData?.profileData?.personalData?.profesion || '',
@@ -78,72 +98,119 @@ export class EditPersonalDataComponent implements OnInit {
       });
     } catch (error) {
       console.error('Error loading user data:', error);
+      this.toastService.show(
+        'Error al cargar los datos del usuario',
+        'error',
+        3000
+      );
     }
   }
 
   toggleEdit(field: string): void {
     this.editableFields[field] = !this.editableFields[field];
-    
+
     if (!this.editableFields[field]) {
-      // Validar solo el campo actual antes de guardar
       const control = this.profileForm.get(field);
       if (control?.invalid) {
-        alert(`Por favor complete el campo ${field} correctamente.`);
-        this.editableFields[field] = true; // Mantener en modo edición
+        this.toastService.show(
+          `Por favor complete el campo "${this.fieldNames[field]}" correctamente.`,
+          'error',
+          3000
+        );
+        this.editableFields[field] = true;
         return;
       }
-      this.onSubmit(field); // Pasar el campo específico a onSubmit
+
+      this.confirmationModal.show(
+        {
+          title: 'Confirmar cambios',
+          message: `¿Está seguro que desea guardar los cambios en "${this.fieldNames[field]}"?`,
+          confirmText: 'Guardar',
+          cancelText: 'Cancelar',
+        },
+        () => this.onSubmit(field),
+        () => {
+          this.editableFields[field] = true;
+          this.toastService.show('Cambios cancelados', 'info', 2000);
+        }
+      );
     }
   }
 
+
   async onSubmit(field?: string): Promise<void> {
     if (!this.currentUser?.email) {
-      alert('Usuario no autenticado.');
+      this.toastService.show('Usuario no autenticado.', 'error', 3000);
       return;
     }
-  
+
     try {
       const userEmailKey = this.formatEmailKey(this.currentUser.email);
       const userData = await this.firebaseService.getUserData(userEmailKey);
-      
-      // Actualizar solo los datos necesarios
+
       const updatedData: any = {
+        fullName: userData?.fullName || '',
         profileData: {
           ...userData?.profileData,
           personalData: {
-            ...userData?.profileData?.personalData
-          }
-        }
+            ...userData?.profileData?.personalData,
+          },
+        },
       };
-  
-      // Si es un campo específico, actualizar solo ese campo
+
       if (field) {
         if (field === 'fullName') {
           updatedData.fullName = this.profileForm.value.fullName;
         } else {
-          updatedData.profileData.personalData[field] = this.profileForm.value[field];
+          updatedData.profileData.personalData[field] =
+            this.profileForm.value[field];
         }
       } else {
-        // Actualizar todos los campos (para cuando se necesite)
         updatedData.fullName = this.profileForm.value.fullName;
         updatedData.profileData.personalData = {
           ...updatedData.profileData.personalData,
-          ...this.profileForm.value
+          ...this.profileForm.value,
         };
       }
-  
-      await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
-      
-      if (field) {
-        alert(`Campo ${field} actualizado exitosamente!`);
-      } else {
-        alert('Datos actualizados exitosamente!');
-      }
-      
+
+      await this.firebaseService.updateUserData(
+        this.currentUser.email,
+        updatedData
+      );
+
+      const dataToNotify = {
+        fullName: updatedData.fullName,
+        ...(field === 'fullName'
+          ? {}
+          : {
+              profesion: updatedData.profileData.personalData.profesion,
+              phone: updatedData.profileData.personalData.phone,
+              editableEmail: updatedData.profileData.personalData.editableEmail,
+              direction: updatedData.profileData.personalData.direction,
+            }),
+        ...(field && field !== 'fullName'
+          ? { [field]: this.profileForm.value[field] }
+          : {}),
+      };
+
+      this.profileService.notifyPersonalDataUpdate(dataToNotify);
+
+      this.toastService.show(
+        field
+          ? `"${this.fieldNames[field]}" actualizado exitosamente!`
+          : 'Datos actualizados exitosamente!',
+        'success',
+        3000
+      );
+
       await this.loadUserData();
     } catch (error) {
       console.error('Error:', error);
-      alert('Error al guardar los datos');
+      this.toastService.show(
+        'Error al guardar los datos. Por favor intente nuevamente.',
+        'error',
+        3000
+      );
     }
   }
 }

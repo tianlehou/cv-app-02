@@ -1,78 +1,116 @@
-/* Contenedor principal */
+/* Contenedor principal - Mismo estilo que edit-about-me */
 .profile-container {
-  max-width: 600px;
-  margin: 10px 0;
-  padding: 20px;
-  border: 1px solid #999;
-  background: #f9f9f9;
-}
-
-/* Grupos de formulario */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-/* Inputs y botones */
-input,
-button {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  min-width: 300px;
+  max-width: 800px;
+  background: var(--clr-white);
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--bg-light);
+  overflow: hidden;
+  padding: 0; /* Eliminamos el padding para que el header ocupe todo el ancho */
 }
 
-input:not([readonly]) {
-  background-color: #fff;
-  border: 1px solid #007bff;
+/* Encabezado - Igual que edit-about-me */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, var(--clr-blue) 0%, var(--clr-blue-dark) 100%);
+  color: var(--clr-white);
+  border-bottom: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-button {
-  background-color: var(--2nd-color);
-  color: white;
-  font-weight: 300;
+.profile-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Cuerpo - Mismo estilo que edit-about-me */
+.profile-body {
+  padding: 24px;
+  background: var(--bg-lighter);
+}
+
+/* Grupos de formulario - Estilo actualizado */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Inputs - Estilo similar a los textarea de about-me */
+input[type="file"] {
+  width: 100%;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--bg-light);
+  background: var(--clr-white);
+  color: var(--text-color);
+  margin-top: 10px;
+}
+
+/* Botón - Estilo idéntico al de about-me */
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--clr-white);
+  border: 1px solid var(--clr-green);
+  color: var(--clr-green);
+  transition: all 0.5s ease-in-out;
 }
 
-button:disabled {
-  background-color: #ccc;
+.btn:hover {
+  background-color: var(--clr-green);
+  color: var(--clr-white);
+}
+
+.btn:disabled {
+  background-color: var(--bg-dark);
+  color: var(--text-color-light);
   cursor: not-allowed;
+  border: 1px solid var(--bg-dark);
 }
 
-/* Mensajes de error */
-.text-danger {
-  color: #e74c3c;
-  font-size: 0.875em;
-}
-
-/* Contenedor de la foto de perfil */
+/* Vista previa de imagen - Estilo mejorado */
 .display-flex-center {
   display: flex;
-  align-items: center; /* Alinear elementos verticalmente */
-  justify-content: space-between; /* Espaciado entre los elementos */
-  gap: 10px; /* Espaciado entre el label y la imagen */
-  padding-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-/* Estilo para el label */
-.display-flex-center label {
-  display: block;
-  margin-bottom: 0.5em;
-  font-weight: 500;
-  flex: 1; /* 1/4 del ancho total (aproximadamente, considerando la suma de las proporciones) */
-  max-width: 25%; /* Limitar el ancho máximo a 25% del contenedor */
-  text-align: left; /* Alinear el texto del label a la izquierda */
-}
-
-/* Estilo para la imagen */
-.display-flex-center .profile-picture-preview {
-  flex: 3; /* 3/4 del ancho total */
-  max-width: 75%; /* Limitar el ancho máximo a 75% del contenedor */
-  height: auto; /* Mantener la proporción de la imagen */
-  object-fit: cover; /* Ajustar la imagen si es necesario */
-  margin-left: auto; /* Separar la imagen del label */
-  margin-top: 10px;
+.profile-picture-preview {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  /* border: 2px solid #ccc; */
+  object-fit: cover;
+  border: 3px solid var(--clr-blue-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Texto de label - Estilo consistente */
+.display-flex-center label {
+  font-weight: 500;
+  color: var(--clr-blue-dark);
+  font-size: 1rem;
+  align-self: flex-start;
+}
+
+/* Mensajes de error - Mismo estilo */
+.text-danger {
+  color: var(--clr-red);
+  font-size: 0.875em;
+  margin-top: 5px;
 }

@@ -26,6 +26,19 @@
   color: #495057;
 }
 
+.modal-header .btn-close {
+  position: absolute;
+  right: 1.5rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
 /* Modal Body */
 .modal-body {
   padding: 1.5rem;

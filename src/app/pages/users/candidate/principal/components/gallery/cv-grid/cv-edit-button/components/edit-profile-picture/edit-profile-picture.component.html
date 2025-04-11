@@ -1,28 +1,33 @@
 <div class="profile-container">
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <div class="display-flex-center">
-        <label for="profilePicture">Foto de Perfil:</label>
-        <!-- Añadir imagen por defecto -->
-        <img
-          [src]="profileForm.get('profilePicture')?.value"
+  <header class="profile-header">
+    <h3><i class="fas fa-camera"></i> Foto de Perfil</h3>
+  </header>
+  
+  <div class="profile-body">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <div class="display-flex-center">
+          <img
+          [src]="profileForm.get('profilePicture')?.value || 'assets/default-profile.png'"
           class="profile-picture-preview"
+          alt="Vista previa de la foto de perfil"
+          />
+          <label>Selecciona una imagen:</label>
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          class="form-control"
         />
       </div>
-      <input
-        id="profilePicture"
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        class="form-control"
-      />
-    </div>
-    <button
-      type="submit"
-      class="btn"
-      [disabled]="profileForm.invalid"
-    >
-      Guardar Foto
-    </button>
-  </form>
+      <button
+        type="submit"
+        class="btn"
+        [disabled]="profileForm.invalid"
+      >
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </form>
+  </div>
 </div>

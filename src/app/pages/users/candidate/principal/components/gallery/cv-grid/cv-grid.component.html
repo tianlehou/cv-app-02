@@ -1,20 +1,50 @@
 <div class="top-row">
-    <app-cv-info-bar></app-cv-info-bar>
-    <app-cv-edit-button (optionSelected)="onOptionSelected($event)"></app-cv-edit-button>
+  <app-cv-info-bar></app-cv-info-bar>
+  <app-cv-edit-button
+    (optionSelected)="onOptionSelected($event)"
+  ></app-cv-edit-button>
 </div>
 
-<app-curriculum-types-info *ngIf="!showGalleryGrid"></app-curriculum-types-info>
+<ng-container *ngIf="showPrincipalSection">
+  <section #principal>
+    <app-curriculum-types-info></app-curriculum-types-info>
+  </section>
+</ng-container>
 
-<div class="gallery-grid" *ngIf="showGalleryGrid">
-    <app-edit-about-me *ngIf="shouldShowComponent('sobre-mi')" [currentUser]="currentUser">
-    </app-edit-about-me>
-    <app-edit-academic-formation *ngIf="shouldShowComponent('formacion')"
-        [currentUser]="currentUser"></app-edit-academic-formation>
-    <app-edit-experience *ngIf="shouldShowComponent('experiencias')" [currentUser]="currentUser"></app-edit-experience>
-    <app-edit-languages *ngIf="shouldShowComponent('idiomas')" [currentUser]="currentUser"></app-edit-languages>
-    <app-edit-personal-data *ngIf="shouldShowComponent('datos-personales')"
-        [currentUser]="currentUser"></app-edit-personal-data>
-    <app-edit-profile-picture *ngIf="shouldShowComponent('foto-perfil')"
-        [currentUser]="currentUser"></app-edit-profile-picture>
-    <app-edit-skills *ngIf="shouldShowComponent('habilidades')" [currentUser]="currentUser"></app-edit-skills>
-</div>
+<section class="gallery-grid" *ngIf="showGalleryGrid">
+  <app-edit-profile-picture
+    *ngIf="shouldShowComponent('foto-perfil')"
+    [currentUser]="currentUser"
+  ></app-edit-profile-picture>
+
+  <app-edit-personal-data
+    *ngIf="shouldShowComponent('datos-personales')"
+    [currentUser]="currentUser"
+  ></app-edit-personal-data>
+
+  <app-edit-about-me
+    *ngIf="shouldShowComponent('sobre-mi')"
+    [currentUser]="currentUser"
+    (backToPrincipal)="handleBackToPrincipal()"
+  ></app-edit-about-me>
+
+  <app-edit-academic-formation
+    *ngIf="shouldShowComponent('formacion')"
+    [currentUser]="currentUser"
+  ></app-edit-academic-formation>
+
+  <app-edit-experience
+    *ngIf="shouldShowComponent('experiencias')"
+    [currentUser]="currentUser"
+  ></app-edit-experience>
+
+  <app-edit-languages
+    *ngIf="shouldShowComponent('idiomas')"
+    [currentUser]="currentUser"
+  ></app-edit-languages>
+
+  <app-edit-skills
+    *ngIf="shouldShowComponent('habilidades')"
+    [currentUser]="currentUser"
+  ></app-edit-skills>
+</section>

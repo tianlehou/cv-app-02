@@ -31,7 +31,6 @@ app-custom-button {
   position: fixed;
   top: 25px;
   right: 25px;
-  /* z-index: 999; */
 }
 
 /* Grupos de formulario */
@@ -99,6 +98,10 @@ button {
 button:disabled {
   background-color: var(--2nd-color);
   cursor: not-allowed;
+}
+
+.btn {
+  z-index: 1;
 }
 
 /* Experiencia */

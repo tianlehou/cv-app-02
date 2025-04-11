@@ -5,6 +5,7 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
+  FormControl,
 } from '@angular/forms';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
 import { RouterModule, Router } from '@angular/router';
@@ -13,18 +14,24 @@ import { GoogleLoginComponent } from '../google-login-button/google-login.compon
 @Component({
   selector: 'app-candidate-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, GoogleLoginComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    GoogleLoginComponent,
+  ],
   templateUrl: './candidate-login.component.html',
   styleUrls: ['./candidate-login.component.css'],
 })
 export class CandidateLoginComponent {
   loginForm: FormGroup;
   showPassword = false;
-  successMessage: string | null = null; // Mensaje de éxito
-  emailErrorMessage: string | null = null; // Mensaje de error para el correo
-  passwordErrorMessage: string | null = null; // Mensaje de error para la contraseña
+  successMessage: string | null = null;
+  emailErrorMessage: string | null = null;
+  passwordErrorMessage: string | null = null;
   @Output() showRegister = new EventEmitter<void>();
   @Output() showForgotPassword = new EventEmitter<void>();
+  @Output() showHome = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -35,13 +42,27 @@ export class CandidateLoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    // Escuchar cambios en los campos para limpiar mensajes de error
+    this.loginForm.get('email')?.valueChanges.subscribe(() => {
+      this.emailErrorMessage = null;
+    });
+    this.loginForm.get('password')?.valueChanges.subscribe(() => {
+      this.passwordErrorMessage = null;
+    });
   }
 
-  // Métodos para manejar los clicks
+  // método de regreso a #home
+  goBackToHome() {
+    this.showHome.emit();
+  }
+
+  // Método para manejar el click en "Registrarse"
   onRegisterClick() {
     this.showRegister.emit();
   }
 
+  // Método para manejar el click en "Olvidé mi contraseña"
   onForgotPasswordClick() {
     this.showForgotPassword.emit();
   }
@@ -50,7 +71,19 @@ export class CandidateLoginComponent {
     this.showPassword = !this.showPassword;
   }
 
+  markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
   login() {
+    // Marcar todos los campos como touched para mostrar errores de validación
+    this.markFormGroupTouched(this.loginForm);
+
     const { email, password } = this.loginForm.value;
 
     // Limpiar mensajes anteriores
@@ -62,7 +95,6 @@ export class CandidateLoginComponent {
       this.firebaseService
         .loginWithEmail(email, password)
         .then((user) => {
-          // Actualizar último acceso
           this.firebaseService.updateUserData(user.email, {
             lastLogin: new Date().toISOString(),
           });
@@ -79,30 +111,20 @@ export class CandidateLoginComponent {
         .catch((error: { code: string }) => {
           console.error(error);
 
-          // Mapeo de errores de Firebase
           const errorMessages: { [key: string]: string } = {
-            'auth/invalid-email':
-              'Correo inválido. Verifica que esté bien escrito.',
+            'auth/invalid-email': 'Correo inválido. Verifica que esté bien escrito.',
             'auth/user-disabled': 'Tu cuenta ha sido deshabilitada.',
             'auth/user-not-found': 'No se encontró una cuenta con este correo.',
             'auth/wrong-password': 'Contraseña incorrecta.',
+            'auth/too-many-requests': 'Demasiados intentos fallidos. Intenta más tarde o restablece tu contraseña.',
           };
 
-          // Obtener el mensaje de error específico o uno genérico
-          const message =
-            errorMessages[error.code as keyof typeof errorMessages] ||
-            '¡Ocurrió un error inesperado!';
+          const message = errorMessages[error.code] || 'Ocurrió un error durante el inicio de sesión.';
 
-          // Asignar el mensaje de error al campo correspondiente
-          if (
-            error.code === 'auth/invalid-email' ||
-            error.code === 'auth/user-not-found'
-          ) {
-            this.emailErrorMessage = message;
-          } else if (error.code === 'auth/wrong-password') {
+          if (error.code === 'auth/wrong-password') {
             this.passwordErrorMessage = message;
           } else {
-            this.emailErrorMessage = message; // Mensaje genérico para otros errores
+            this.emailErrorMessage = message;
           }
         });
     }

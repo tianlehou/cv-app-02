@@ -3,14 +3,10 @@
   <button class="custom-button" routerLink="/edit-profile">Editar</button>
 </div>
 
-<div class="profile-container" #profileContainer>
+<div class="profile-container">
   <div class="profile-components-row">
     <app-profile-picture *ngIf="currentUser" [currentUser]="currentUser"></app-profile-picture>
     <app-personal-data *ngIf="currentUser" [currentUser]="currentUser"></app-personal-data>
   </div>
   <app-gallery *ngIf="currentUser" [currentUser]="currentUser"></app-gallery>
 </div>
-
-<button class="back-to-top" (click)="scrollToTop()" [class.visible]="showBackToTop">
-  <i class="fas fa-arrow-up"></i>
-</button>
