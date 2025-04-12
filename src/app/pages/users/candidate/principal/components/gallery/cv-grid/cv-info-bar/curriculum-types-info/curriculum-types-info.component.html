@@ -1,76 +1,174 @@
 <section class="info-container" #infoContainer>
-    <header class="info-header">
-        <button class="back-button" (click)="goBack()">
-            <i class="fas fa-arrow-left"></i> Volver
-        </button>
-    </header>
+  <header class="info-header">
+    <i class="fas fa-file-alt"></i>
+    <h3>Tipos de Curriculum</h3>
+  </header>
 
-    <div class="info-content">
-        <p>
-            Existen varios tipos de currículum, cada uno con un enfoque diferente según el objetivo profesional, la
-            industria o las preferencias del reclutador. Elegir el formato adecuado puede marcar la diferencia en tu
-            búsqueda de empleo.
-        </p>
+  <div class="info-content">
+    <p>
+      Existen varios tipos de currículum, cada uno con un enfoque diferente
+      según el objetivo profesional, la industria o las preferencias del
+      reclutador. Elegir el formato adecuado puede marcar la diferencia en tu
+      búsqueda de empleo.
+    </p>
 
-        <div>
-            <h4>1. Currículum Cronológico</h4>
-            <ul>
-                <li><strong>Enfoque:</strong> Ordena la experiencia laboral de más reciente a más antigua.</li>
-                <li><strong>Ventaja:</strong> Ideal para mostrar una trayectoria profesional estable y con crecimiento.
-                </li>
-                <li><strong>Desventaja:</strong> Puede destacar cambios frecuentes de trabajo o lagunas temporales.</li>
-            </ul>
-        </div>
-
-        <div>
-            <h4>2. Currículum Funcional (o Temático)</h4>
-            <ul>
-                <li><strong>Enfoque:</strong> Se centra en habilidades y logros en lugar de la experiencia cronológica.
-                </li>
-                <li><strong>Ventaja:</strong> Útil para quienes tienen vacíos en su historial o están cambiando de
-                    carrera.</li>
-                <li><strong>Desventaja:</strong> Algunos reclutadores lo ven con escepticismo por ocultar la línea de
-                    tiempo.</li>
-            </ul>
-        </div>
-
-        <div>
-            <h4>3. Currículum Combinado (Mixto)</h4>
-            <ul>
-                <li><strong>Enfoque:</strong> Combina lo mejor del cronológico y el funcional.</li>
-                <li><strong>Ventaja:</strong> Versátil, adecuado para la mayoría de los candidatos.</li>
-                <li><strong>Desventaja:</strong> Puede ser más largo y requerir más ajustes.</li>
-            </ul>
-        </div>
-
-        <div>
-            <h4>4. Currículum ATS (Optimizado para Sistemas de Tracking)</h4>
-            <ul>
-                <li><strong>Enfoque:</strong> Diseñado para pasar filtros automáticos de reclutamiento.</li>
-                <li><strong>Características:</strong> Formato simple, sin columnas o gráficos, con palabras clave
-                    específicas.</li>
-                <li><strong>Ejemplo:</strong> El "ATS Método Harvard" que prioriza estructura clara.</li>
-            </ul>
-        </div>
-
-        <div>
-            <h4>5. Currículum Creativo/Visual</h4>
-            <ul>
-                <li><strong>Enfoque:</strong> Diseños innovadores con colores y formatos no tradicionales.</li>
-                <li><strong>Ventaja:</strong> Destaca en industrias creativas (diseño, marketing).</li>
-                <li><strong>Desventaja:</strong> No compatible con ATS y puede distraer en sectores formales.</li>
-            </ul>
-        </div>
-
-        <div class="examples">
-            <h4>¿Cuál elegir según tu situación?</h4>
-            <ul>
-                <li><strong>Para ATS y empresas tradicionales:</strong> Cronológico, combinado o ATS-optimizado.</li>
-                <li><strong>Para creativos:</strong> Diseños visuales (como Canvas), con versión ATS de respaldo.</li>
-                <li><strong>Para cambios de carrera:</strong> Funcional o combinado.</li>
-                <li><strong>Para perfiles junior:</strong> Combinado que destaque habilidades y formación.</li>
-                <li><strong>Para posiciones ejecutivas:</strong> Cronológico que muestre trayectoria ascendente.</li>
-            </ul>
-        </div>
+    <div class="type-item">
+      <h4 class="text-purple">
+        <i class="fas fa-history"></i> 1. Currículum Cronológico
+      </h4>
+      <ul>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Enfoque:</strong> Ordena la experiencia laboral de más
+          reciente a más antigua.
+        </li>
+        <li>
+          <i class="fas fa-thumbs-up text-green"></i>
+          <strong>Ventaja:</strong> Ideal para mostrar una trayectoria
+          profesional estable y con crecimiento.
+        </li>
+        <li>
+          <i class="fas fa-exclamation-triangle text-yellow"></i>
+          <strong>Desventaja:</strong> Puede destacar cambios frecuentes de
+          trabajo o lagunas temporales.
+        </li>
+      </ul>
     </div>
+
+    <div class="type-item">
+      <h4 class="text-blue">
+        <i class="fas fa-tasks"></i> 2. Currículum Funcional (o Temático)
+      </h4>
+      <ul>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Enfoque:</strong> Se centra en habilidades y logros en lugar
+          de la experiencia cronológica.
+        </li>
+        <li>
+          <i class="fas fa-thumbs-up text-green"></i>
+          <strong>Ventaja:</strong> Útil para quienes tienen vacíos en su
+          historial o están cambiando de carrera.
+        </li>
+        <li>
+          <i class="fas fa-exclamation-triangle text-yellow"></i>
+          <strong>Desventaja:</strong> Algunos reclutadores lo ven con
+          escepticismo por ocultar la línea de tiempo.
+        </li>
+      </ul>
+    </div>
+
+    <div class="type-item">
+      <h4 class="text-green-dark">
+        <i class="fas fa-blender-phone"></i> 3. Currículum Combinado (Mixto)
+      </h4>
+      <ul>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Enfoque:</strong> Combina lo mejor del cronológico y el
+          funcional.
+        </li>
+        <li>
+          <i class="fas fa-thumbs-up text-green"></i>
+          <strong>Ventaja:</strong> Versátil, adecuado para la mayoría de los
+          candidatos.
+        </li>
+        <li>
+          <i class="fas fa-exclamation-triangle text-yellow"></i>
+          <strong>Desventaja:</strong> Puede ser más largo y requerir más
+          ajustes.
+        </li>
+      </ul>
+    </div>
+
+    <div class="type-item">
+      <h4 class="text-blue-dark">
+        <i class="fas fa-robot"></i> 4. Currículum ATS (Optimizado para Sistemas
+        de Tracking)
+      </h4>
+      <ul>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Enfoque:</strong> Diseñado para pasar filtros automáticos de
+          reclutamiento.
+        </li>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Características:</strong> Formato simple, sin columnas o
+          gráficos, con palabras clave específicas.
+        </li>
+        <li>
+          <i class="fas fa-lightbulb text-yellow"></i>
+          <strong>Ejemplo:</strong> El "ATS Método Harvard" que prioriza
+          estructura clara.
+        </li>
+      </ul>
+    </div>
+
+    <div class="type-item">
+      <h4 class="text-purple-dark">
+        <i class="fas fa-paint-brush"></i> 5. Currículum Creativo/Visual
+      </h4>
+      <ul>
+        <li>
+          <i class="fas fa-check-circle text-green"></i>
+          <strong>Enfoque:</strong> Diseños innovadores con colores y formatos
+          no tradicionales.
+        </li>
+        <li>
+          <i class="fas fa-thumbs-up text-green"></i>
+          <strong>Ventaja:</strong> Destaca en industrias creativas (diseño,
+          marketing).
+        </li>
+        <li>
+          <i class="fas fa-exclamation-triangle text-yellow"></i>
+          <strong>Desventaja:</strong> No compatible con ATS y puede distraer en
+          sectores formales.
+        </li>
+      </ul>
+    </div>
+
+    <div class="examples">
+      <h4 class="text-green-dark">
+        <i class="fas fa-lightbulb"></i> ¿Cuál elegir según tu situación?
+      </h4>
+      <ul>
+        <li>
+          <div>
+            <i class="fas fa-briefcase text-blue-dark"></i>
+            <strong>Para ATS y empresas tradicionales:</strong>
+          </div>
+          <p>Cronológico, combinado o ATS-optimizado.</p>
+        </li>
+        <li>
+          <div>
+            <i class="fas fa-palette text-purple"></i>
+            <strong>Para creativos:</strong>
+          </div>
+          <p>Diseños visuales (como Canvas), con versión ATS de respaldo.</p>
+        </li>
+        <li>
+          <div>
+            <i class="fas fa-exchange-alt text-green"></i>
+            <strong>Para cambios de carrera:</strong>
+          </div>
+          <p>Funcional o combinado.</p>
+        </li>
+        <li>
+          <div>
+            <i class="fas fa-user-graduate text-blue"></i>
+            <strong>Para perfiles junior:</strong>
+          </div>
+          <p>Combinado que destaque habilidades y formación.</p>
+        </li>
+        <li>
+          <div>
+            <i class="fas fa-user-tie text-blue-dark"></i>
+            <strong>Para posiciones ejecutivas:</strong>
+          </div>
+          <p>Cronológico que muestre trayectoria ascendente.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
 </section>

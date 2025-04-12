@@ -2,6 +2,7 @@
   <app-cv-info-bar></app-cv-info-bar>
   <app-cv-edit-button
     (optionSelected)="onOptionSelected($event)"
+    (backToPrincipal)="handleBackToPrincipal()"
   ></app-cv-edit-button>
 </div>
 
@@ -25,7 +26,6 @@
   <app-edit-about-me
     *ngIf="shouldShowComponent('sobre-mi')"
     [currentUser]="currentUser"
-    (backToPrincipal)="handleBackToPrincipal()"
   ></app-edit-about-me>
 
   <app-edit-academic-formation

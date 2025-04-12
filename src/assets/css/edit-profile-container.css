@@ -32,16 +32,7 @@
         margin-left: 1rem;
     }
 
-    .header-icons {
-        display: flex;
-        align-items: center;
-        margin-left: 1rem;
-        gap: 15px;
-        z-index: 0;
-    }
-
-    .info-icon,
-    .close-icon {
+    .info-icon {
         background: rgba(255, 255, 255, 0.2);
         border: none;
         color: var(--clr-white);
@@ -54,9 +45,6 @@
         align-items: center;
         justify-content: center;
         transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .info-icon {
         animation: pulse 3s infinite;
     }
 
@@ -74,7 +62,7 @@
     }
 
     50% {
-        transform: scale(1.25);
+        transform: scale(1.5);
     }
 }
 

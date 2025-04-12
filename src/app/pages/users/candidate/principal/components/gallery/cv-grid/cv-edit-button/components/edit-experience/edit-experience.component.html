@@ -4,10 +4,7 @@
       <i class="fas fa-briefcase"></i>
       <span>Experiencias</span>
     </h3>
-    <div class="header-icons">
-      <i class="fas fa-info-circle info-icon" title="Información"></i>
-      <i class="fas fa-times close-icon" title="salir"></i>
-    </div>
+    <i class="fas fa-info-circle info-icon" title="Información"></i>
   </header>
 
   <body>
@@ -16,7 +13,12 @@
       <div class="form-group">
         <div class="display-flex-space-between">
           <label for="experience">Experiencia(s):</label>
-          <button type="button" class="add-button" id="experience-btn" (click)="addExperience()">
+          <button
+            type="button"
+            class="add-button"
+            id="experience-btn"
+            (click)="addExperience()"
+          >
             Agregar
           </button>
         </div>
@@ -24,41 +26,71 @@
         <div class="line"></div>
 
         <div formArrayName="experience">
-          <div *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i" class="experience-group">
+          <div
+            *ngFor="let exp of experienceArray.controls; let i = index"
+            [formGroupName]="i"
+            class="experience-group"
+          >
             <div class="form-row">
               <!-- Año -->
               <div class="form-group quarter-width">
                 <label for="year">Año:</label>
-                <input type="text" id="year" formControlName="year" [readonly]="!editableFields['experience']"
-                  class="form-control" />
+                <input
+                  type="text"
+                  id="year"
+                  formControlName="year"
+                  [readonly]="!editableFields['experience']"
+                  class="form-control"
+                />
               </div>
               <!-- Empresa -->
               <div class="form-group three-quarters-width">
                 <label for="company">Empresa:</label>
-                <input type="text" id="company" formControlName="company" [readonly]="!editableFields['experience']"
-                  class="form-control" />
+                <input
+                  type="text"
+                  id="company"
+                  formControlName="company"
+                  [readonly]="!editableFields['experience']"
+                  class="form-control"
+                />
               </div>
             </div>
 
             <!-- Rol o Cargo -->
             <div class="form-group">
               <label for="role">Rol:</label>
-              <input type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"
-                class="form-control" />
+              <input
+                type="text"
+                id="role"
+                formControlName="role"
+                [readonly]="!editableFields['experience']"
+                class="form-control"
+              />
             </div>
 
             <!-- Destalles o Descripción -->
             <label>Detalle(s):</label>
-            <textarea formControlName="description" class="form-control"
-              [readonly]="!editableFields['experience']"></textarea>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              [readonly]="!editableFields['experience']"
+            ></textarea>
 
             <div class="button-row">
-              <button type="button" class="btn delete-btn" (click)="confirmDeleteExperience(i)">
+              <button
+                type="button"
+                class="btn delete-btn"
+                (click)="confirmDeleteExperience(i)"
+              >
                 Eliminar
               </button>
 
-              <button type="button" class="edit-save-button" (click)="toggleEdit('experience')"
-                [class.editing]="editableFields['experience']">
+              <button
+                type="button"
+                class="edit-save-button"
+                (click)="toggleEdit('experience')"
+                [class.editing]="editableFields['experience']"
+              >
                 {{ editableFields["experience"] ? "Guardar" : "Editar" }}
               </button>
             </div>

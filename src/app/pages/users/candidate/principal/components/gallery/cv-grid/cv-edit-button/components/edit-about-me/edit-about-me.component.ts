@@ -23,7 +23,6 @@ export class EditAboutMeComponent implements OnInit {
   showSaveButton = false;
   originalData: { [key: string]: any } = {};
   showInfoComponent = false;
-  @Output() backToPrincipal = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -56,11 +55,6 @@ export class EditAboutMeComponent implements OnInit {
                             this.profileForm.get('aboutMe')?.value !== this.originalData['aboutMe'];
       }
     });
-  }
-
-  onClose(): void {
-    console.log('Emitting backToPrincipal desde edit-about-me');
-    this.backToPrincipal.emit();
   }
 
   // Método para inicializar el formulario
