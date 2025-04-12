@@ -1,39 +1,3 @@
-/* Contenedor principal */
-.profile-container {
-  max-width: 600px;
-  margin: 10px 0;
-  padding: 20px;
-  border: 1px solid #999;
-  background: #f9f9f9;
-}
-
-/* Encabezado de perfil */
-.profile-header {
-  display: flex; /* Habilita el uso de flexbox */
-  align-items: center; /* Alinea verticalmente los elementos */
-  justify-content: space-between; /* Espacia los elementos: el h1 a la izquierda y el botón a la derecha */
-  width: 100%; /* Asegura que el contenedor ocupe todo el ancho de la pantalla */
-  padding-bottom: 2em;
-}
-
-.profile-header h1 {
-  flex: 1; /* Toma todo el espacio disponible, haciendo que el h1 se quede centrado */
-  text-align: center; /* Centra el texto del h1 */
-  margin: 0; /* Elimina márgenes por defecto */
-  font-weight: 400;
-  font-size: 1.2em;
-  position: relative;
-  left: 1em;
-}
-
-/* Botón personalizado */
-app-custom-button {
-  position: fixed;
-  top: 25px;
-  right: 25px;
-  z-index: 999;
-}
-
 /* Grupos de formulario */
 .form-group {
   margin-bottom: 15px;
@@ -90,14 +54,14 @@ input:not([readonly]) {
 
 /* Estilo de los botones generales */
 button {
-  background-color: var(--2nd-color);
+  background-color: var(--clr-green);
   color: white;
   font-weight: 300;
   cursor: pointer;
-}
+}r
 
 button:disabled {
-  background-color: var(--2nd-color);
+  background-color: var(--clr-green);
   cursor: not-allowed;
 }
 
@@ -109,16 +73,10 @@ button:disabled {
   width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
 
-.btn-auto-width {
-  width: auto; /* Asegura que el botón tenga el tamaño del contenido */
-  padding: 0.5em 1em; /* Da un buen aspecto al botón */
-  background: var(--primary-color);
-}
 
-.line {
-  border: #999 1px solid;
-  margin: 20px 100px;
-}
+
+
+
 
 /* Filas y columnas en la sección de experiencia */
 .form-row {
@@ -151,14 +109,3 @@ textarea {
   gap: 2em;
 }
 
-.delete-btn {
-  background: var(--danger-color);
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-/* Foto de perfil */
-.profile-picture-preview {
-  max-width: 100%;
-  margin-top: 10px;
-}

@@ -57,9 +57,9 @@ export class EditPersonalDataComponent implements OnInit {
     this.profileForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       profesion: ['', [Validators.required]],
-      phone: ['', [Validators.pattern(/^\d{4}-\d{4}$/)]],
+      phone: ['', [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)]],
       editableEmail: ['', [Validators.required, Validators.email]],
-      direction: [''],
+      direction: ['', [Validators.required, Validators.minLength(3)]],
     });
   }
 
@@ -107,9 +107,8 @@ export class EditPersonalDataComponent implements OnInit {
   }
 
   toggleEdit(field: string): void {
-    this.editableFields[field] = !this.editableFields[field];
-
-    if (!this.editableFields[field]) {
+    // Caso 1: Si se hace clic en "Guardar" (el campo ya está en edición)
+    if (this.editableFields[field]) {
       const control = this.profileForm.get(field);
       if (control?.invalid) {
         this.toastService.show(
@@ -117,10 +116,9 @@ export class EditPersonalDataComponent implements OnInit {
           'error',
           3000
         );
-        this.editableFields[field] = true;
         return;
       }
-
+  
       this.confirmationModal.show(
         {
           title: 'Confirmar cambios',
@@ -128,15 +126,55 @@ export class EditPersonalDataComponent implements OnInit {
           confirmText: 'Guardar',
           cancelText: 'Cancelar',
         },
-        () => this.onSubmit(field),
         () => {
-          this.editableFields[field] = true;
-          this.toastService.show('Cambios cancelados', 'info', 2000);
+          this.onSubmit(field);
+          this.editableFields[field] = false; // Desactivar el modo edición después de guardar
+        },
+        () => {
+          this.toastService.show('Cambios no guardados', 'info', 2000);
         }
       );
+      return;
     }
+  
+    // Caso 2: Si hay otro campo en modo edición
+    const currentlyEditingField = Object.keys(this.editableFields).find(key => this.editableFields[key]);
+    
+    if (currentlyEditingField) {
+      const control = this.profileForm.get(currentlyEditingField);
+      if (control?.invalid) {
+        this.toastService.show(
+          `Por favor complete el campo "${this.fieldNames[currentlyEditingField]}" correctamente antes de editar otro campo.`,
+          'error',
+          3000
+        );
+        return;
+      }
+  
+      this.confirmationModal.show(
+        {
+          title: 'Confirmar cambios',
+          message: `¿Desea guardar los cambios en "${this.fieldNames[currentlyEditingField]}" antes de editar otro campo?`,
+          confirmText: 'Guardar y continuar',
+          cancelText: 'Cancelar',
+        },
+        () => {
+          this.onSubmit(currentlyEditingField).then(() => {
+            // Desactivar el campo anterior y activar el nuevo
+            this.editableFields[currentlyEditingField] = false;
+            this.editableFields[field] = true;
+          });
+        },
+        () => {
+          this.toastService.show('Cambios no guardados', 'info', 2000);
+        }
+      );
+      return;
+    }
+  
+    // Caso 3: No hay campos en edición - activar el modo edición
+    this.editableFields[field] = true;
   }
-
 
   async onSubmit(field?: string): Promise<void> {
     if (!this.currentUser?.email) {
@@ -202,6 +240,11 @@ export class EditPersonalDataComponent implements OnInit {
         'success',
         3000
       );
+
+      // Desactivar el campo después de guardar
+      if (field) {
+        this.editableFields[field] = false;
+      }
 
       await this.loadUserData();
     } catch (error) {
