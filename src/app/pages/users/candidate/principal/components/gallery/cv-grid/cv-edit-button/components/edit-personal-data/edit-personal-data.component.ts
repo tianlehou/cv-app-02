@@ -23,6 +23,7 @@ export class EditPersonalDataComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   editableFields: { [key: string]: boolean } = {};
+  originalValues: { [key: string]: any } = {}; // Almacena los valores originales de cada campo
 
   // Diccionario para nombres descriptivos de campos
   private fieldNames: { [key: string]: string } = {
@@ -61,6 +62,11 @@ export class EditPersonalDataComponent implements OnInit {
       editableEmail: ['', [Validators.required, Validators.email]],
       direction: ['', [Validators.required, Validators.minLength(3)]],
     });
+
+    // Guardar valores iniciales
+    Object.keys(this.profileForm.controls).forEach(field => {
+      this.originalValues[field] = this.profileForm.get(field)?.value;
+    });
   }
 
   formatPhoneNumber(event: Event): void {
@@ -96,6 +102,11 @@ export class EditPersonalDataComponent implements OnInit {
         editableEmail: userData?.profileData?.personalData?.editableEmail || '',
         direction: userData?.profileData?.personalData?.direction || '',
       });
+
+      // Actualizar valores originales después de cargar los datos
+      Object.keys(this.profileForm.controls).forEach(field => {
+        this.originalValues[field] = this.profileForm.get(field)?.value;
+      });
     } catch (error) {
       console.error('Error loading user data:', error);
       this.toastService.show(
@@ -106,9 +117,37 @@ export class EditPersonalDataComponent implements OnInit {
     }
   }
 
+  // Verifica si hay cambios en un campo específico
+  hasChanges(field: string): boolean {
+    const control = this.profileForm.get(field);
+    return control ? control.value !== this.originalValues[field] : false;
+  }
+
+  // Determina el texto del botón según el estado
+  getButtonText(field: string): string {
+    if (!this.editableFields[field]) {
+      return 'Editar';
+    }
+    return this.hasChanges(field) ? 'Guardar' : 'Cancelar';
+  }
+
+  // Determina la clase del botón según el estado
+  getButtonClass(field: string): string {
+    if (!this.editableFields[field]) {
+      return '';
+    }
+    return this.hasChanges(field) ? 'editing' : 'cancel';
+  }
+
   toggleEdit(field: string): void {
-    // Caso 1: Si se hace clic en "Guardar" (el campo ya está en edición)
-    if (this.editableFields[field]) {
+    // Caso 1: Si está en modo edición y no hay cambios (Cancelar)
+    if (this.editableFields[field] && !this.hasChanges(field)) {
+      this.editableFields[field] = false;
+      return;
+    }
+
+    // Caso 2: Si está en modo edición y hay cambios (Guardar)
+    if (this.editableFields[field] && this.hasChanges(field)) {
       const control = this.profileForm.get(field);
       if (control?.invalid) {
         this.toastService.show(
@@ -118,7 +157,7 @@ export class EditPersonalDataComponent implements OnInit {
         );
         return;
       }
-  
+
       this.confirmationModal.show(
         {
           title: 'Confirmar cambios',
@@ -128,19 +167,32 @@ export class EditPersonalDataComponent implements OnInit {
         },
         () => {
           this.onSubmit(field);
-          this.editableFields[field] = false; // Desactivar el modo edición después de guardar
+          this.originalValues[field] = this.profileForm.get(field)?.value; // Actualizar valor original
+          this.editableFields[field] = false;
         },
         () => {
-          this.toastService.show('Cambios no guardados', 'info', 2000);
+          // Si cancela, revertir los cambios
+          this.profileForm.get(field)?.setValue(this.originalValues[field]);
+          this.editableFields[field] = false;
         }
       );
       return;
     }
-  
-    // Caso 2: Si hay otro campo en modo edición
-    const currentlyEditingField = Object.keys(this.editableFields).find(key => this.editableFields[key]);
-    
+
+    // Caso 3: Si hay otro campo en edición pero sin cambios
+    const currentlyEditingField = Object.keys(this.editableFields).find(
+      (key) => this.editableFields[key]
+    );
+
     if (currentlyEditingField) {
+      // Si el campo actualmente en edición no tiene cambios, simplemente lo cerramos
+      if (!this.hasChanges(currentlyEditingField)) {
+        this.editableFields[currentlyEditingField] = false;
+        this.editableFields[field] = true;
+        return;
+      }
+
+      // Si el campo actualmente en edición tiene cambios, mostramos confirmación
       const control = this.profileForm.get(currentlyEditingField);
       if (control?.invalid) {
         this.toastService.show(
@@ -150,7 +202,7 @@ export class EditPersonalDataComponent implements OnInit {
         );
         return;
       }
-  
+
       this.confirmationModal.show(
         {
           title: 'Confirmar cambios',
@@ -163,6 +215,10 @@ export class EditPersonalDataComponent implements OnInit {
             // Desactivar el campo anterior y activar el nuevo
             this.editableFields[currentlyEditingField] = false;
             this.editableFields[field] = true;
+            // Actualizar valor original del campo anterior
+            this.originalValues[currentlyEditingField] = this.profileForm.get(
+              currentlyEditingField
+            )?.value;
           });
         },
         () => {
@@ -171,8 +227,8 @@ export class EditPersonalDataComponent implements OnInit {
       );
       return;
     }
-  
-    // Caso 3: No hay campos en edición - activar el modo edición
+
+    // Caso 4: No hay campos en edición - activar el modo edición
     this.editableFields[field] = true;
   }
 
@@ -241,9 +297,13 @@ export class EditPersonalDataComponent implements OnInit {
         3000
       );
 
-      // Desactivar el campo después de guardar
+      // Actualizar valores originales después de guardar
       if (field) {
-        this.editableFields[field] = false;
+        this.originalValues[field] = this.profileForm.get(field)?.value;
+      } else {
+        Object.keys(this.profileForm.controls).forEach(field => {
+          this.originalValues[field] = this.profileForm.get(field)?.value;
+        });
       }
 
       await this.loadUserData();

@@ -16,16 +16,29 @@
       <div class="form-group">
         <label for="fullName">Nombre Completo:</label>
         <div class="input-group">
-          <input id="fullName" formControlName="fullName" type="text" class="form-control"
-            [readonly]="!editableFields['fullName']" />
-          <button type="button" (click)="toggleEdit('fullName')" [class.editing]="editableFields['fullName']">
-            {{ editableFields["fullName"] ? "Guardar" : "Editar" }}
+          <input
+            id="fullName"
+            formControlName="fullName"
+            type="text"
+            class="form-control"
+            [readonly]="!editableFields['fullName']"
+          />
+          <button
+            type="button"
+            (click)="toggleEdit('fullName')"
+            [class.editing]="getButtonClass('fullName') === 'editing'"
+            [class.cancel]="getButtonClass('fullName') === 'cancel'"
+          >
+            {{ getButtonText("fullName") }}
           </button>
         </div>
-        <div *ngIf="
-          profileForm.get('fullName')?.invalid &&
-          profileForm.get('fullName')?.touched
-        " class="text-danger">
+        <div
+          *ngIf="
+            profileForm.get('fullName')?.invalid &&
+            profileForm.get('fullName')?.touched
+          "
+          class="text-danger"
+        >
           El nombre es obligatorio y debe tener al menos 3 caracteres.
         </div>
       </div>
@@ -34,16 +47,29 @@
       <div class="form-group">
         <label for="profesion">Profesión:</label>
         <div class="input-group">
-          <input id="profesion" formControlName="profesion" type="text" class="form-control"
-            [readonly]="!editableFields['profesion']" />
-          <button type="button" (click)="toggleEdit('profesion')" [class.editing]="editableFields['profesion']">
-            {{ editableFields["profesion"] ? "Guardar" : "Editar" }}
+          <input
+            id="profesion"
+            formControlName="profesion"
+            type="text"
+            class="form-control"
+            [readonly]="!editableFields['profesion']"
+          />
+          <button
+            type="button"
+            (click)="toggleEdit('profesion')"
+            [class.editing]="getButtonClass('profesion') === 'editing'"
+            [class.cancel]="getButtonClass('profesion') === 'cancel'"
+          >
+            {{ getButtonText("profesion") }}
           </button>
         </div>
-        <div *ngIf="
-          profileForm.get('profesion')?.invalid &&
-          profileForm.get('profesion')?.touched
-        " class="text-danger">
+        <div
+          *ngIf="
+            profileForm.get('profesion')?.invalid &&
+            profileForm.get('profesion')?.touched
+          "
+          class="text-danger"
+        >
           La profesión es obligatoria.
         </div>
       </div>
@@ -52,16 +78,32 @@
       <div class="form-group">
         <label for="phone">Teléfono:</label>
         <div class="input-group">
-          <input id="phone" formControlName="phone" type="tel" class="form-control"
-            [readonly]="!editableFields['phone']" (input)="formatPhoneNumber($event)" maxlength="9"
-            placeholder="Ej: 6123-1234" />
-          <button type="button" (click)="toggleEdit('phone')" [class.editing]="editableFields['phone']">
-            {{ editableFields["phone"] ? "Guardar" : "Editar" }}
+          <input
+            id="phone"
+            formControlName="phone"
+            type="tel"
+            class="form-control"
+            [readonly]="!editableFields['phone']"
+            (input)="formatPhoneNumber($event)"
+            maxlength="9"
+            placeholder="Ej: 6123-1234"
+          />
+          <button
+            type="button"
+            (click)="toggleEdit('phone')"
+            [class.editing]="getButtonClass('phone') === 'editing'"
+            [class.cancel]="getButtonClass('phone') === 'cancel'"
+          >
+            {{ getButtonText("phone") }}
           </button>
         </div>
-        <div *ngIf="
-          profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched
-        " class="text-danger">
+        <div
+          *ngIf="
+            profileForm.get('phone')?.invalid &&
+            profileForm.get('phone')?.touched
+          "
+          class="text-danger"
+        >
           Introduce un número de teléfono válido.
         </div>
       </div>
@@ -70,14 +112,29 @@
       <div class="form-group">
         <label for="editableEmail">Correo electrónico:</label>
         <div class="input-group">
-          <input id="editableEmail" formControlName="editableEmail" type="email" class="form-control"
-            [readonly]="!editableFields['editableEmail']" />
-          <button type="button" (click)="toggleEdit('editableEmail')" [class.editing]="editableFields['editableEmail']">
-            {{ editableFields["editableEmail"] ? "Guardar" : "Editar" }}
+          <input
+            id="editableEmail"
+            formControlName="editableEmail"
+            type="email"
+            class="form-control"
+            [readonly]="!editableFields['editableEmail']"
+          />
+          <button
+            type="button"
+            (click)="toggleEdit('editableEmail')"
+            [class.editing]="getButtonClass('editableEmail') === 'editing'"
+            [class.cancel]="getButtonClass('editableEmail') === 'cancel'"
+          >
+            {{ getButtonText("editableEmail") }}
           </button>
         </div>
-        <div *ngIf="profileForm.get('editableEmail')?.invalid && profileForm.get('editableEmail')?.touched"
-          class="text-danger">
+        <div
+          *ngIf="
+            profileForm.get('editableEmail')?.invalid &&
+            profileForm.get('editableEmail')?.touched
+          "
+          class="text-danger"
+        >
           Introduce un correo electrónico válido
         </div>
       </div>
@@ -86,15 +143,30 @@
       <div class="form-group">
         <label for="direction">Dirección:</label>
         <div class="input-group">
-          <input id="direction" formControlName="direction" type="text" class="form-control"
-            [readonly]="!editableFields['direction']" />
-          <button type="button" (click)="toggleEdit('direction')" [class.editing]="editableFields['direction']">
-            {{ editableFields["direction"] ? "Guardar" : "Editar" }}
+          <input
+            id="direction"
+            formControlName="direction"
+            type="text"
+            class="form-control"
+            [readonly]="!editableFields['direction']"
+          />
+          <button
+            type="button"
+            (click)="toggleEdit('direction')"
+            [class.editing]="getButtonClass('direction') === 'editing'"
+            [class.cancel]="getButtonClass('direction') === 'cancel'"
+          >
+            {{ getButtonText("direction") }}
           </button>
         </div>
-        <div *ngIf="profileForm.get('direction')?.invalid && profileForm.get('direction')?.touched"
-        class="text-danger">
-        Introduce una dirección
+        <div
+          *ngIf="
+            profileForm.get('direction')?.invalid &&
+            profileForm.get('direction')?.touched
+          "
+          class="text-danger"
+        >
+          Introduce una dirección
         </div>
       </div>
     </form>

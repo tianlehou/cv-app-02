@@ -52,6 +52,15 @@
     background-color: var(--clr-green-dark);
   }
 
+  /* Estilo para botón Cancelar */
+  button.cancel {
+    background-color: var(--clr-red);
+  }
+
+  button.cancel:hover {
+    background-color: var(--clr-red-dark);
+  }
+
   /* Mensajes de error */
   .text-danger {
     color: var(--clr-red);
