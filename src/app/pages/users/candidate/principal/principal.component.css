@@ -6,13 +6,6 @@
   border-bottom: 1px solid #ccc;
 }
 
-app-sidebar {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin: 0 1rem;
-  padding: 0;
-}
-
 .profile-header button {
   position: absolute;
   right: 10px;
@@ -30,7 +23,6 @@ app-custom-button {
   position: fixed;
   top: 25px;
   right: 25px;
-  z-index: 1000;
 }
 
 .profile-components-row {
