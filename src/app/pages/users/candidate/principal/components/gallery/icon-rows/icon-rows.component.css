@@ -15,45 +15,89 @@
     position: relative;
     cursor: pointer;
     padding: 16px 0;
-    transition: all 0.2s ease;
+    transition: all 0.5s ease;
 }
 
+/* Default icon styles */
 .icon {
     font-size: 20px;
-    color: var(--bg-light);
-    transition: all 0.2s ease;
+    transition: all 0.5s ease;
 }
 
-.icon-container:hover .icon {
-    color: var(--clr-blue);
+/* Camera icon (fa-camera-retro) */
+.icon-container .fa-camera-retro {
+    color: var(--clr-yellow-light); /* Inactive */
 }
 
+.icon-container:hover .fa-camera-retro {
+    color: var(--clr-yellow-dark); /* Hover */
+}
+
+.icon-container.active .fa-camera-retro {
+    color: var(--clr-yellow); /* Active */
+}
+
+/* Video icon (fa-film) */
+.icon-container .fa-film {
+    color: var(--clr-red-light); /* Inactive */
+}
+
+.icon-container:hover .fa-film {
+    color: var(--clr-red-dark); /* Hover */
+}
+
+.icon-container.active .fa-film {
+    color: var(--clr-red); /* Active */
+}
+
+/* File icon (fa-file) */
+.icon-container .fa-file {
+    color: var(--clr-purple-light); /* Inactive */
+}
+
+.icon-container:hover .fa-file {
+    color: var(--clr-purple-dark); /* Hover */
+}
+
+.icon-container.active .fa-file {
+    color: var(--clr-purple); /* Active */
+}
+
+/* Active line styles */
 .active-line {
     position: absolute;
     bottom: -1px;
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--clr-blue);
     transform: scaleX(0);
     transform-origin: center;
-    transition: transform 0.3s ease;
+    transition: transform 1.5s ease;
 }
 
-.icon-container.active .icon {
-    color: var(--clr-blue);
+/* Active line gradient per icon */
+.icon-container.active:has(.fa-camera-retro) .active-line {
+    background: linear-gradient(to right, var(--clr-yellow-dark), var(--clr-yellow-light));
 }
 
-.icon-container.active .active-line {
-    transform: scaleX(1);
+.icon-container.active:has(.fa-film) .active-line {
+    background: linear-gradient(to right, var(--clr-red-light), var(--clr-red-dark), var(--clr-red-light));
 }
 
-/* Efecto hover más pronunciado */
+.icon-container.active:has(.fa-file) .active-line {
+    background: linear-gradient(to right, var(--clr-purple-light), var(--clr-purple-dark));
+}
+
+/* Hover effect */
 .icon-container:hover {
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Tamaño de iconos más grande cuando están activos */
+/* Active icon scaling */
 .icon-container.active .icon {
     transform: scale(1.1);
+}
+
+.icon-container.active .active-line {
+    transform: scaleX(1);
 }

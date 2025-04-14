@@ -6,32 +6,34 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
-import { User } from '@angular/fire/auth';
+import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 
 @Component({
-  selector: 'app-edit-academic-formation',
+  selector: 'app-edit-education',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule,
   ],
-  templateUrl: './edit-academic-formation.component.html',
-  styleUrls: ['./edit-academic-formation.component.css'],
+  templateUrl: './edit-education.component.html',
+  styleUrls: ['./edit-education.component.css'],
 })
-export class EditAcademicFormationComponent implements OnInit {
+export class EditEducationComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
-  academicFormationIndexToDelete: number | null = null;
+  educationIndexToDelete: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private ConfirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -45,13 +47,13 @@ export class EditAcademicFormationComponent implements OnInit {
 
   private initializeForm(): void {
     this.profileForm = this.fb.group({
-      academicFormation: this.fb.array([]),
+      education: this.fb.array([]),
     });
   }
 
   private setEditableFields(): void {
     this.editableFields = {
-      academicFormation: false,
+      education: false,
     };
   }
 
@@ -64,22 +66,23 @@ export class EditAcademicFormationComponent implements OnInit {
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       const profileData = userData?.profileData || {};
-      this.populateAcademicFormation(profileData.academicFormation || []);
+      this.populateEducation(profileData.education || []);
     } catch (error) {
       console.error('Error al cargar los datos del usuario:', error);
+      this.toastService.show('Error al cargar los datos de educación', 'error');
     }
   }
 
-  private populateAcademicFormation(formationList: any[]): void {
-    const formArray = this.academicFormationArray;
+  private populateEducation(educationList: any[]): void {
+    const formArray = this.educationArray;
     formArray.clear();
-    formationList.forEach((formation) => {
-      const formationGroup = this.fb.group({
-        year: [formation.year || '', Validators.required],
-        institution: [formation.institution || '', Validators.required],
-        degree: [formation.degree || '', Validators.required],
+    educationList.forEach((educationItem) => {
+      const educationGroup = this.fb.group({
+        year: [educationItem.year || '', Validators.required],
+        institution: [educationItem.institution || '', Validators.required],
+        degree: [educationItem.degree || '', Validators.required],
       });
-      formArray.push(formationGroup);
+      formArray.push(educationGroup);
     });
   }
 
@@ -92,7 +95,7 @@ export class EditAcademicFormationComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (!this.profileForm.valid || !this.userEmail) {
-      alert('Error en los datos o usuario no autenticado.');
+      this.toastService.show('Datos inválidos o usuario no autenticado', 'error');
       return;
     }
 
@@ -102,42 +105,41 @@ export class EditAcademicFormationComponent implements OnInit {
 
       const updatedProfileData = {
         ...currentProfileData,
-        academicFormation: this.academicFormationArray.value,
+        education: this.educationArray.value,
       };
 
       await this.firebaseService.updateUserData(this.userEmail, {
         profileData: updatedProfileData,
       });
 
-      alert('Datos actualizados exitosamente.');
-
+      this.toastService.show('Datos de educación actualizados correctamente', 'success');
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      alert('Error al guardar datos. Intenta nuevamente.');
+      this.toastService.show('Error al guardar los datos. Por favor, inténtalo nuevamente.', 'error');
     }
   }
 
-  get academicFormationArray(): FormArray {
-    return this.profileForm.get('academicFormation') as FormArray;
+  get educationArray(): FormArray {
+    return this.profileForm.get('education') as FormArray;
   }
 
-  addAcademicFormation(): void {
-    const formationGroup = this.fb.group({
+  addEducation(): void {
+    const educationGroup = this.fb.group({
       year: ['', Validators.required],
       institution: ['', Validators.required],
       degree: ['', Validators.required],
     });
-    this.academicFormationArray.push(formationGroup);
+    this.educationArray.push(educationGroup);
   }
 
-  async removeAcademicFormation(index: number): Promise<void> {
-    if (index < 0 || index >= this.academicFormationArray.length) {
-      console.error('Índice inválido al intentar eliminar una formación académica.');
+  async removeEducation(index: number): Promise<void> {
+    if (index < 0 || index >= this.educationArray.length) {
+      console.error('Índice inválido al intentar eliminar educación.');
       return;
     }
 
-    this.academicFormationArray.removeAt(index);
+    this.educationArray.removeAt(index);
 
     if (this.userEmail) {
       try {
@@ -146,37 +148,38 @@ export class EditAcademicFormationComponent implements OnInit {
 
         const updatedProfileData = {
           ...currentProfileData,
-          academicFormation: this.academicFormationArray.value,
+          education: this.educationArray.value,
         };
 
         await this.firebaseService.updateUserData(this.userEmail, {
           profileData: updatedProfileData,
         });
 
-        console.log('Formación académica eliminada y datos sincronizados con la base de datos.');
+        this.toastService.show('Educación eliminada correctamente', 'success');
       } catch (error) {
         console.error('Error al sincronizar los datos con la base de datos:', error);
+        this.toastService.show('Error al eliminar la educación', 'error');
       }
     } else {
       console.error('Usuario no autenticado. No se puede actualizar la base de datos.');
     }
   }
 
-  confirmDeleteAcademicFormation(index: number): void {
-    this.academicFormationIndexToDelete = index;
-    this.ConfirmationModalService.show(
+  confirmDeleteEducation(index: number): void {
+    this.educationIndexToDelete = index;
+    this.confirmationModalService.show(
       {
-        title: 'Eliminar Formación Académica',
-        message: '¿Estás seguro de que deseas eliminar esta formación académica?'
+        title: 'Eliminar Educación',
+        message: '¿Estás seguro de que deseas eliminar esta educación?'
       },
       () => this.onDeleteConfirmed()
     );
   }
 
   onDeleteConfirmed(): void {
-    if (this.academicFormationIndexToDelete !== null) {
-      this.removeAcademicFormation(this.academicFormationIndexToDelete);
+    if (this.educationIndexToDelete !== null) {
+      this.removeEducation(this.educationIndexToDelete);
     }
-    this.academicFormationIndexToDelete = null;
+    this.educationIndexToDelete = null;
   }
 }

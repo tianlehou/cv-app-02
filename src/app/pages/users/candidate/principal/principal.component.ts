@@ -23,10 +23,7 @@ import { GalleryComponent } from './components/gallery/gallery.component';
     GalleryComponent
   ],
   templateUrl: './principal.component.html',
-  styleUrls: [
-    './principal.component.css',
-    '../../../../shared/components/buttons/custom-button/custom-button.component.css',
-  ],
+  styleUrls: ['./principal.component.css'],
 })
 export class PrincipalComponent implements OnInit {
   currentUser: any = null;

@@ -24,6 +24,11 @@
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
+
+  .fa-info-circle {
+    font-size: 2rem;
+    color: var(--clr-blue);
+  }
 }
 
 header {

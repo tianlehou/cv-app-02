@@ -2,22 +2,22 @@
   <header>
     <h3>
       <i class="fas fa-graduation-cap"></i>
-      <span>Formación Académica</span>
+      <span>Educación</span>
     </h3>
-    <i class="fas fa-info-circle info-icon" title="Información"></i>
+    <i class="fas fa-info-circle info-icon" title="Information"></i>
   </header>
 
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-      <!-- Formación Académica -->
+      <!-- Education -->
       <div class="form-group">
         <div class="display-flex-space-between">
-          <label for="academic-formation">Formación Académica(s):</label>
+          <label for="education">Educación:</label>
           <button
             type="button"
             class="add-button"
-            id="academic-formation-btn"
-            (click)="addAcademicFormation()"
+            id="education-btn"
+            (click)="addEducation()"
           >
             Agregar
           </button>
@@ -25,58 +25,58 @@
 
         <div class="line"></div>
 
-        <div formArrayName="academicFormation">
+        <div formArrayName="education">
           <div
             *ngFor="
-              let formation of academicFormationArray.controls;
+              let educationItem of educationArray.controls;
               let i = index
             "
             [formGroupName]="i"
-            class="academic-formation-group"
+            class="education-group"
           >
             <div class="form-row">
-              <!-- Año -->
+              <!-- Year -->
               <div class="form-group quarter-width">
                 <label for="year">Año:</label>
                 <input
                   type="text"
                   id="year"
                   formControlName="year"
-                  [readonly]="!editableFields['academicFormation']"
+                  [readonly]="!editableFields['education']"
                   class="form-control"
                 />
               </div>
-              <!-- Institución -->
+              <!-- Institution -->
               <div class="form-group three-quarters-width">
-                <label for="institution">Institución/Universidad:</label>
+                <label for="institution">Instituto/Universidad:</label>
                 <input
                   type="text"
                   id="institution"
                   formControlName="institution"
-                  [readonly]="!editableFields['academicFormation']"
+                  [readonly]="!editableFields['education']"
                   class="form-control"
                 />
               </div>
             </div>
 
-            <!-- Título / Grado -->
+            <!-- Degree -->
             <div class="form-group">
-              <label for="degree">Título/Grado:</label>
+              <label for="degree">Título:</label>
               <input
                 type="text"
                 id="degree"
                 formControlName="degree"
-                [readonly]="!editableFields['academicFormation']"
+                [readonly]="!editableFields['education']"
                 class="form-control"
               />
             </div>
 
-            <!-- Botones -->
+            <!-- Buttons -->
             <div class="button-row">
               <button
                 type="button"
                 class="btn btn-danger delete-btn"
-                (click)="confirmDeleteAcademicFormation(i)"
+                (click)="confirmDeleteEducation(i)"
               >
                 Eliminar
               </button>
@@ -84,10 +84,10 @@
               <button
                 type="button"
                 class="edit-save-button"
-                (click)="toggleEdit('academicFormation')"
-                [class.editing]="editableFields['academicFormation']"
+                (click)="toggleEdit('education')"
+                [class.editing]="editableFields['education']"
               >
-                {{ editableFields["academicFormation"] ? "Guardar" : "Editar" }}
+                {{ editableFields["education"] ? "Guardar" : "Editar" }}
               </button>
             </div>
 

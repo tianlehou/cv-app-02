@@ -28,10 +28,10 @@
     [currentUser]="currentUser"
   ></app-edit-about-me>
 
-  <app-edit-academic-formation
-    *ngIf="shouldShowComponent('formacion')"
+  <app-edit-education
+    *ngIf="shouldShowComponent('educacion')"
     [currentUser]="currentUser"
-  ></app-edit-academic-formation>
+  ></app-edit-education>
 
   <app-edit-experience
     *ngIf="shouldShowComponent('experiencias')"

@@ -121,7 +121,7 @@ export class FirebaseService {
         phone?: string;
         profesion?: string;
         aboutMe?: string;
-        academicFormation?: string;
+        education?: string;
         experience?: string;
         languages?: string;
         multimedia?: {

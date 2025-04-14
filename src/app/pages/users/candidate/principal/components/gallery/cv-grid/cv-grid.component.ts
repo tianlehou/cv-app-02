@@ -5,7 +5,7 @@ import { CvInfoBarComponent } from './cv-info-bar/cv-info-bar.component';
 import { CvEditButtonComponent } from './cv-edit-button/cv-edit-button.component';
 import { CurriculumTypesInfoComponent } from './cv-info-bar/curriculum-types-info/curriculum-types-info.component';
 import { EditAboutMeComponent } from './cv-edit-button/components/edit-about-me/edit-about-me.component';
-import { EditAcademicFormationComponent } from './cv-edit-button/components/edit-academic-formation/edit-academic-formation.component';
+import { EditEducationComponent } from './cv-edit-button/components/edit-education/edit-education.component';
 import { EditExperienceComponent } from './cv-edit-button/components/edit-experience/edit-experience.component';
 import { EditLanguagesComponent } from './cv-edit-button/components/edit-languages/edit-languages.component';
 import { EditPersonalDataComponent } from './cv-edit-button/components/edit-personal-data/edit-personal-data.component';
@@ -21,7 +21,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     CvEditButtonComponent,
     CurriculumTypesInfoComponent,
     EditAboutMeComponent,
-    EditAcademicFormationComponent,
+    EditEducationComponent,
     EditExperienceComponent,
     EditLanguagesComponent,
     EditPersonalDataComponent,
