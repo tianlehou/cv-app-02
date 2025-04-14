@@ -71,21 +71,23 @@
     right: 0;
     height: 2px;
     transform: scaleX(0);
-    transform-origin: center;
     transition: transform 1.5s ease;
 }
 
 /* Active line gradient per icon */
 .icon-container.active:has(.fa-camera-retro) .active-line {
     background: linear-gradient(to right, var(--clr-yellow-dark), var(--clr-yellow-light));
+    transform-origin: left;
 }
 
 .icon-container.active:has(.fa-film) .active-line {
     background: linear-gradient(to right, var(--clr-red-light), var(--clr-red-dark), var(--clr-red-light));
+    transform-origin: center;
 }
 
 .icon-container.active:has(.fa-file) .active-line {
     background: linear-gradient(to right, var(--clr-purple-light), var(--clr-purple-dark));
+    transform-origin: right;
 }
 
 /* Hover effect */

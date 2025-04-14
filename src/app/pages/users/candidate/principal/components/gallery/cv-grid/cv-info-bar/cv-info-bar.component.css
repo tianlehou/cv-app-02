@@ -1,52 +1,49 @@
-.gallery-info {
+.cv-info-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 8px;
-    font-size: 0.8rem;
+    justify-content: space-between;
+    gap: 0.1rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    background: var(--clr-white);
-    border: 1px solid var(--bg-light);
-    border-radius: 8px;
+    background: white;
     height: 40px;
-}
-
-/* ícono de información con animación */
-.info-icon {
-    font-size: 1rem;
-    color: var(--clr-blue);
-    background: var(--clr-white);
-    border: 2px solid var(--clr-blue);
-    border-radius: 50%;
+  }
+  
+  .title {
+    font-weight: 500;
+    margin-right: 0.5rem;
+  }
+  
+  .cv-button {
+    width: 90px;
+    padding: 8px 0;
+    border: none;
+    color: white;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin-left: 1rem;
-}
+    font-weight: 500;
+    transition: all 0.2s ease;
 
-@keyframes attention {
-
-    0%,
-    40% {
-        transform: translateX(0) rotate(0deg);
-    }
-
-    10% {
-        transform: translateX(25px) rotate(45deg);
-    }
-
-    20% {
-        transform: translateX(-140px) rotate(-90deg);
-    }
-
-    30% {
-        transform: translateX(15px) rotate(45deg);
-    }
-}
-
-.info-icon.attention {
-    animation: attention 10s ease-in-out infinite;
-}
+  }
+  
+  .cv-button.canvas {
+    border-radius: 8px 0 0 8px;
+    background: linear-gradient(
+        90deg,
+        var(--clr-red) 0%,
+        var(--clr-purple-dark) 100%
+    );
+  }
+  
+  .cv-button.ats {
+    border-radius: 0 8px 8px 0;
+    background: linear-gradient(
+        90deg,
+        var(--clr-purple-dark) 0%,
+        var(--clr-blue) 100%
+    );
+  }
+  
+  .cv-button:hover {
+    opacity: 0.9;
+    transform: translateY(-15px);
+  }

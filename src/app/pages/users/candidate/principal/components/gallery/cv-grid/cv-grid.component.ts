@@ -3,7 +3,7 @@ import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { CvInfoBarComponent } from './cv-info-bar/cv-info-bar.component';
 import { CvEditButtonComponent } from './cv-edit-button/cv-edit-button.component';
-import { CurriculumTypesInfoComponent } from './cv-info-bar/curriculum-types-info/curriculum-types-info.component';
+import { CurriculumTypesInfoComponent } from './cv-gallery-grid/curriculum-types-info/curriculum-types-info.component';
 import { EditAboutMeComponent } from './cv-edit-button/components/edit-about-me/edit-about-me.component';
 import { EditEducationComponent } from './cv-edit-button/components/edit-education/edit-education.component';
 import { EditExperienceComponent } from './cv-edit-button/components/edit-experience/edit-experience.component';
@@ -38,7 +38,7 @@ export class CvGridComponent implements OnInit {
   showGalleryGrid = false;
   showPrincipalSection = true;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     if (this.currentUser?.email) {
@@ -76,7 +76,7 @@ export class CvGridComponent implements OnInit {
     this.showGalleryGrid = false;
     this.showPrincipalSection = true;
     this.cdr.detectChanges();
-    
+
     // Opcional: Si necesitas forzar actualización de vista
     setTimeout(() => {
       this.cdr.markForCheck();
