@@ -19,11 +19,12 @@ import { FirebaseService } from '../../../../../../../../../../shared/services/f
 import { User } from '@angular/fire/auth';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
+import { ProfilePictureInfoComponent } from './profile-picture-info/profile-picture-info.component';
 
 @Component({
   selector: 'app-edit-profile-picture',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ProfilePictureInfoComponent],
   templateUrl: './edit-profile-picture.component.html',
   styleUrls: ['./edit-profile-picture.component.css'],
 })
@@ -32,6 +33,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   profileForm!: FormGroup;
   userEmailKey: string | null = null;
   selectedFile: File | null = null;
+  showInfoComponent = false;
 
   constructor(
     private fb: FormBuilder,
@@ -40,7 +42,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     private profileService: ProfileService,
     private toastService: ToastService,
     private confirmationModalService: ConfirmationModalService
-  ) {}
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentUser'] && this.currentUser?.email) {
@@ -148,7 +150,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
       // 3. Obtener datos actuales del usuario
       const userData = await this.firebaseService.getUserData(this.userEmailKey!);
-      
+
       // 4. Crear objeto actualizado manteniendo todos los datos existentes
       const updatedData = {
         profileData: {
@@ -181,5 +183,15 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
         'error'
       );
     }
+  }
+
+  // método para abrir about-me-info
+  openInfoModal(): void {
+    this.showInfoComponent = true;
+  }
+
+  // método para cerrar about-me-info
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
   }
 }

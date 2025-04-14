@@ -11,11 +11,12 @@ import { ProfileService } from '../../../../../../services/profile.service';
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
+import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
 
 @Component({
   selector: 'app-edit-personal-data',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, PersonalDataInfoComponent],
   templateUrl: './edit-personal-data.component.html',
   styleUrls: ['./edit-personal-data.component.css'],
 })
@@ -24,6 +25,7 @@ export class EditPersonalDataComponent implements OnInit {
   profileForm!: FormGroup;
   editableFields: { [key: string]: boolean } = {};
   originalValues: { [key: string]: any } = {}; // Almacena los valores originales de cada campo
+  showInfoComponent = false;
 
   // Diccionario para nombres descriptivos de campos
   private fieldNames: { [key: string]: string } = {
@@ -315,5 +317,15 @@ export class EditPersonalDataComponent implements OnInit {
         3000
       );
     }
+  }
+  
+  // método para abrir about-me-info
+  openInfoModal(): void {
+    this.showInfoComponent = true;
+  }
+
+  // método para cerrar about-me-info
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
   }
 }

@@ -7,6 +7,12 @@
     font-weight: 500;
     background: white;
     height: 40px;
+
+    span {
+        text-align: right;
+        width: 100%;
+        min-width: 50px;
+    }
   }
   
   .title {
