@@ -3,7 +3,13 @@ import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { CvInfoBarComponent } from './cv-info-bar/cv-info-bar.component';
 import { CvEditButtonComponent } from './cv-edit-button/cv-edit-button.component';
+
+// Grid-Components
 import { CurriculumTypesInfoComponent } from './cv-gallery-grid/curriculum-types-info/curriculum-types-info.component';
+import { CvCanvasComponent } from './cv-gallery-grid/cv-canvas/cv-canvas.component';
+import { CvAtsComponent } from "./cv-gallery-grid/cv-ats/cv-ats.component";
+
+// Edit-Components
 import { EditAboutMeComponent } from './cv-edit-button/components/edit-about-me/edit-about-me.component';
 import { EditEducationComponent } from './cv-edit-button/components/edit-education/edit-education.component';
 import { EditExperienceComponent } from './cv-edit-button/components/edit-experience/edit-experience.component';
@@ -20,6 +26,8 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     CvInfoBarComponent,
     CvEditButtonComponent,
     CurriculumTypesInfoComponent,
+    CvCanvasComponent,
+    CvAtsComponent,
     EditAboutMeComponent,
     EditEducationComponent,
     EditExperienceComponent,
@@ -27,7 +35,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     EditPersonalDataComponent,
     EditProfilePictureComponent,
     EditSkillsComponent,
-  ],
+],
   templateUrl: './cv-grid.component.html',
   styleUrls: ['./cv-grid.component.css'],
 })
@@ -37,6 +45,9 @@ export class CvGridComponent implements OnInit {
   selectedComponent: string | null = null;
   showGalleryGrid = false;
   showPrincipalSection = true;
+  showCanvas = false;
+  showAts = false;
+  showCurriculumInfo = true;
 
   constructor(private cdr: ChangeDetectorRef) { }
 
@@ -48,6 +59,20 @@ export class CvGridComponent implements OnInit {
 
   private formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
+  }
+
+  onCanvasClicked() {
+    this.showCanvas = true;
+    this.showAts = false;
+    this.showCurriculumInfo = false;
+    this.cdr.detectChanges();
+  }
+
+  onAtsClicked() {
+    this.showCanvas = false;
+    this.showAts = true;
+    this.showCurriculumInfo = false;
+    this.cdr.detectChanges();
   }
 
   onOptionSelected(option: string) {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,5 +9,14 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./cv-info-bar.component.css']
 })
 export class CvInfoBarComponent {
-  // Component logic can be added here if needed
+  @Output() canvasClicked = new EventEmitter<void>();
+  @Output() atsClicked = new EventEmitter<void>();
+
+  onCanvasClick() {
+    this.canvasClicked.emit();
+  }
+
+  onAtsClick() {
+    this.atsClicked.emit();
+  }
 }
