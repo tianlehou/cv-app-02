@@ -8,8 +8,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-blue);
-    border: 2px dashed var(--clr-blue-light);
+    background: white;
+    border: 2px dashed var(--clr-blue);
     overflow: hidden;
     transition: all 0.3s ease-in-out;
     animation: pulse 1.5s infinite;
@@ -17,7 +17,6 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     opacity: 0;
     visibility: hidden;
-    z-index: 2;
 }
 
 .back-to-top.visible {
@@ -28,7 +27,7 @@
 .back-to-top i {
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--clr-blue-light);
+    color: var(--clr-blue);
 }
 
 @keyframes pulse {

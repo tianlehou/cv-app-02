@@ -5,8 +5,8 @@
     height: 36px;
     width: 36px;
     border-radius: 8px;
-    background: var(--bg-yellow);
-    border: 2px dashed var(--clr-yellow);
+    background: var(--bg-red);
+    border: 2px dashed var(--clr-red);
     overflow: hidden;
     transition: all 0.3s ease-in-out;
     animation: pulse 1.5s infinite;
@@ -16,7 +16,7 @@
 i {
     font-size: 1rem;
     cursor: pointer;
-    color: var(--clr-yellow);
+    color: var(--clr-red);
 }
 
 @keyframes pulse {

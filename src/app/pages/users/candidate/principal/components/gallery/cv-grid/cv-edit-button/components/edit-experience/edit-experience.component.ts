@@ -1,14 +1,21 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
+import { ExperienceInfoComponent } from './experience-info/experience-info.component';
 
 @Component({
   selector: 'app-edit-experience',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ExperienceInfoComponent],
   templateUrl: './edit-experience.component.html',
   styleUrls: ['./edit-experience.component.css'],
 })
@@ -18,6 +25,7 @@ export class EditExperienceComponent implements OnInit {
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   experienceIndexToDelete: number | null = null;
+  showInfoComponent = false;
 
   constructor(
     private fb: FormBuilder,
@@ -58,13 +66,15 @@ export class EditExperienceComponent implements OnInit {
   private populateExperiences(experiences: any[]): void {
     const formArray = this.experienceArray;
     formArray.clear();
-    experiences.forEach(exp => {
-      formArray.push(this.fb.group({
-        year: [exp.year || '', Validators.required],
-        company: [exp.company || '', Validators.required],
-        role: [exp.role || '', Validators.required],
-        description: [exp.description || '', Validators.required],
-      }));
+    experiences.forEach((exp) => {
+      formArray.push(
+        this.fb.group({
+          year: [exp.year || '', Validators.required],
+          company: [exp.company || '', Validators.required],
+          role: [exp.role || '', Validators.required],
+          description: [exp.description || '', Validators.required],
+        })
+      );
     });
   }
 
@@ -80,23 +90,25 @@ export class EditExperienceComponent implements OnInit {
       alert('Deber completar los campos vacíos.');
       return;
     }
-  
+
     try {
       // Obtener los datos actuales de profileData
       const userData = await this.firebaseService.getUserData(this.userEmail);
       const currentProfileData = userData?.profileData || {};
-  
+
       // Actualizar únicamente el campo experience
       const updatedProfileData = {
         ...currentProfileData,
         experience: this.experienceArray.value,
       };
-  
+
       // Guardar los datos actualizados en la base de datos
-      await this.firebaseService.updateUserData(this.userEmail, { profileData: updatedProfileData });
-  
+      await this.firebaseService.updateUserData(this.userEmail, {
+        profileData: updatedProfileData,
+      });
+
       alert('Datos actualizados exitosamente.');
-  
+
       // Restaurar estado
       await this.loadUserData();
     } catch (error) {
@@ -161,7 +173,7 @@ export class EditExperienceComponent implements OnInit {
     this.ConfirmationModalService.show(
       {
         title: 'Eliminar experiencia',
-        message: '¿Estás seguro de que deseas eliminar esta experiencia?'
+        message: '¿Estás seguro de que deseas eliminar esta experiencia?',
       },
       () => this.onDeleteConfirmed()
     );
@@ -172,5 +184,15 @@ export class EditExperienceComponent implements OnInit {
       this.removeExperience(this.experienceIndexToDelete);
     }
     this.experienceIndexToDelete = null;
+  }
+
+  // método para abrir about-me-info
+  openInfoModal(): void {
+    this.showInfoComponent = true;
+  }
+
+  // método para cerrar about-me-info
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
   }
 }

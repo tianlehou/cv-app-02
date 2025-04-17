@@ -6,8 +6,8 @@
   height: 36px;
   width: 36px;
   border-radius: 8px;
-  background: var(--clr-white);
-  border: 2px dashed var(--clr-blue);
+  background: var(--bg-purple);
+  border: 2px dashed var(--clr-purple);
   overflow: visible;
   transition: all 0.3s ease-in-out;
   animation: pulse 1.5s infinite;
@@ -22,7 +22,7 @@
 i {
   font-size: 1rem;
   cursor: pointer;
-  color: var(--clr-blue);
+  color: var(--clr-purple);
 }
 
 .options-popover {

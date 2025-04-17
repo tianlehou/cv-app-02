@@ -1,4 +1,4 @@
-/* about-me-info.component.css */
+/* profile-picture-info.component.css */
 .info-container {
   width: 100% !important;
   min-width: 300px;
@@ -68,34 +68,82 @@ header {
     font-size: 1.3rem;
 
     i {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
   }
 }
 
 /* Info - Colores de Tarjetas */
-#info-section {
+#main-section {
+  .info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--clr-yellow);
+    background: rgba(59, 130, 246, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
   .blue {
     border-left-color: var(--clr-blue);
 
-    .fa-bullseye {
+    .fa-lightbulb {
       background: var(--clr-blue);
+    }
+  }
+
+  .orange {
+    border-left-color: var(--clr-orange);
+
+    .fa-lightbulb {
+      background: var(--clr-orange);
     }
   }
 
   .red {
     border-left-color: var(--clr-red);
 
-    .fa-magic {
+    .fa-exclamation-triangle {
       background: var(--clr-red);
+    }
+  }
+
+  .purple {
+    border-left-color: var(--clr-purple);
+
+    .fa-file-alt {
+      background: var(--clr-purple);
     }
   }
 
   .green {
     border-left-color: var(--clr-green);
 
-    .fa-clipboard-list {
+    .fa-check-double {
       background: var(--clr-green);
+    }
+  }
+
+  .blue-dark {
+    border-left-color: var(--clr-blue-dark);
+
+    .fa-eye {
+      background: var(--clr-blue-dark);
+    }
+  }
+
+  .purple-dark {
+    border-left-color: var(--clr-purple-dark);
+
+    .fa-camera {
+      background: var(--clr-purple-dark);
     }
   }
 }
@@ -108,13 +156,14 @@ header {
   margin-bottom: 16px;
 
   i {
-    font-size: 1.5rem;
+    font-size: 1rem;
     width: 40px;
     height: 40px;
+    padding: 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 50% !important;
     color: white;
   }
 
@@ -133,16 +182,23 @@ header {
 
   li {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     padding: 10px 0;
     border-bottom: 1px dashed var(--bg-light);
 
+    span {
+      text-align: justify;
+    }
+
     i {
-      font-size: 1.1rem;
-      margin-top: 3px;
-      flex-shrink: 0;
+      font-size: 1rem;
+      margin-bottom: 3px;
       color: var(--clr-yellow);
+    }
+
+    strong {
+      margin: 0 10px;
     }
   }
 
@@ -154,7 +210,9 @@ header {
 /* Ejemplos - Título */
 #examples-section {
   .gradient-title {
-    background: linear-gradient(135deg, var(--clr-blue) 0%, var(--clr-purple) 100%);
+    background: linear-gradient(135deg,
+        var(--clr-blue) 0%,
+        var(--clr-purple) 100%);
     color: white;
     padding: 12px 20px;
     border-radius: 8px;
@@ -176,14 +234,14 @@ header {
       gap: 12px;
       margin-bottom: 12px;
 
-
       i {
-        font-size: 1.3rem;
+        font-size: 1rem;
         width: 40px;
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 0 10px;
         border-radius: 50%;
         color: white;
       }
@@ -191,7 +249,7 @@ header {
 
     p {
       text-align: justify;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
     }
   }
 }
@@ -216,6 +274,15 @@ header {
     }
   }
 
+  .clr-purple {
+    background: rgba(139, 92, 246, 0.08);
+    border-left: 4px solid var(--clr-purple);
+
+    i {
+      background: var(--clr-purple);
+    }
+  }
+
   .clr-red {
     background: rgba(239, 68, 68, 0.08);
     border-left: 4px solid var(--clr-red);
@@ -225,12 +292,21 @@ header {
     }
   }
 
-  .clr-purple {
-    background: rgba(139, 92, 246, 0.08);
-    border-left: 4px solid var(--clr-purple);
+  .clr-yellow {
+    background: rgba(234, 179, 8, 0.08);
+    border-left: 4px solid var(--clr-yellow);
 
     i {
-      background: var(--clr-purple);
+      background: var(--clr-yellow);
+    }
+  }
+
+  .clr-orange {
+    background: rgba(249, 115, 22, 0.08);
+    border-left: 4px solid var(--clr-orange);
+
+    i {
+      background: var(--clr-orange);
     }
   }
 }

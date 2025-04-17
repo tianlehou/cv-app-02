@@ -1,3 +1,4 @@
+// video-grid.component.ts
 import {
   Component,
   Input,
@@ -11,28 +12,47 @@ import {
   inject,
 } from '@angular/core';
 import { User } from '@angular/fire/auth';
-import { CommonModule, NgStyle } from '@angular/common';
-import { FileSizePipe } from '../../../../../../../shared/pipes/filesize.pipe';
+import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { FirebaseService } from '../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../shared/services/confirmation-modal.service';
-import { formatEmailKey, sortVideosByDate, initExpandedStates, validateCurrentUser, trackByVideoUrl,
-  setupVideoPlayers, onVideoPlay, handleError, calculateTotalSize, updateState, handleVideoUpload, updateUserVideos
+import {
+  formatEmailKey,
+  sortVideosByDate,
+  initExpandedStates,
+  validateCurrentUser,
+  trackByVideoUrl,
+  setupVideoPlayers,
+  onVideoPlay,
+  handleError,
+  calculateTotalSize,
+  updateState,
+  updateUserVideos,
 } from './video.utils';
-import { VideoGridState, UploadProgress } from './video-grid.types';
+import { VideoGridState } from './video-grid.types';
 import { VideoService } from './video.service';
+import { VideoInfoBarComponent } from './video-info-bar/video-info-bar.component';
+import { VideoUploadButtonComponent } from './video-upload-button/video-upload-button.component';
+import { VideoUploadProgressBarComponent } from './video-upload-progress-bar/video-upload-progress-bar.component';
 
 @Component({
   selector: 'app-video-grid',
   standalone: true,
-  imports: [CommonModule, FileSizePipe, NgStyle],
+  imports: [
+    CommonModule,
+    VideoInfoBarComponent,
+    VideoUploadButtonComponent,
+    VideoUploadProgressBarComponent,
+  ],
   templateUrl: './video-grid.component.html',
   styleUrls: ['./video-grid.component.css'],
 })
 export class VideoGridComponent implements OnInit, AfterViewInit {
-  @ViewChildren('videoPlayer') videoPlayers!: QueryList<ElementRef<HTMLVideoElement>>;
+  @ViewChildren('videoPlayer') videoPlayers!: QueryList<
+    ElementRef<HTMLVideoElement>
+  >;
   @Input() currentUser: User | null = null;
-  
+
   state: VideoGridState = {
     userVideos: [],
     isLoading: false,
@@ -40,8 +60,14 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     totalUploadedMB: 0,
     uploadProgress: null,
     uploadedSize: 0,
-    totalSize: 0
+    totalSize: 0,
   };
+
+  get userEmailKey(): string | null {
+    return this.currentUser?.email
+      ? formatEmailKey(this.currentUser.email)
+      : null;
+  }
 
   private videoService = inject(VideoService);
   private toast = inject(ToastService);
@@ -62,93 +88,97 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     this.videoPlayers.changes.subscribe(() => this.setupVideoPlayers());
   }
 
-  toggleExpansion(videoUrl: string): void {
-    this.state = updateState(
-      this.state,
-      {
-        expandedStates: {
-          ...this.state.expandedStates,
-          [videoUrl]: !this.state.expandedStates[videoUrl]
-        }
-      },
-      this.ngZone,
-      this.cdr
-    );
-  }
+  // En video-grid.component.ts
+  handleFileSelected(file: File): void {
+    console.log('handleFileSelected called with file:', file.name);
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const file = input.files[0];
-    if (!file.type.startsWith('video/')) {
-      this.toast.show('Formato de archivo inválido. Solo se permiten videos.', 'error');
-      input.value = '';
+    if (!this.userEmailKey) {
+      console.log('No userEmailKey available');
       return;
     }
 
-    this.uploadVideo(file);
-  }
-
-  confirmDeleteVideo(videoUrl: string): void {
-    this.confirmationModal.show(
-      {
-        title: 'Eliminar Video',
-        message: '¿Estás seguro de que deseas eliminar este video?'
-      },
-      () => this.deleteVideo(videoUrl)
-    );
-  }
-
-  private async uploadVideo(file: File): Promise<void> {
-    if (!validateCurrentUser(this.currentUser)) return;
-
-    const userEmailKey = formatEmailKey(this.currentUser!.email!);
+    console.log('Starting upload process...');
     this.state = updateState(
       this.state,
       {
         uploadProgress: 0,
         uploadedSize: 0,
         totalSize: file.size,
-        isLoading: true
       },
       this.ngZone,
       this.cdr
     );
 
-    try {
-      const downloadURL = await handleVideoUpload(
-        file,
-        userEmailKey,
-        this.videoService,
-        (progress, uploaded, total) => {
-          this.updateUploadProgress({ progress, uploaded, total });
-        }
-      );
+    console.log('Calling videoService.uploadVideo');
+    this.videoService
+      .uploadVideo(this.userEmailKey, file, (progress, uploaded, total) => {
+        console.log('Upload progress:', progress, uploaded, total);
+        this.ngZone.run(() => {
+          this.state = updateState(
+            this.state,
+            {
+              uploadProgress: progress,
+              uploadedSize: uploaded,
+              totalSize: total,
+            },
+            this.ngZone,
+            this.cdr
+          );
+        });
+      })
+      .then((downloadURL) => {
+        console.log('Upload complete, downloadURL:', downloadURL);
+        this.handleUploadComplete(downloadURL);
+        this.resetUploadState();
+      })
+      .catch((error) => {
+        console.error('Upload error:', error);
+        this.handleUploadError(error);
+      });
+  }
 
-      await updateUserVideos(
-        [...this.state.userVideos, downloadURL],
-        this.currentUser!,
-        this.firebaseService
-      );
+  private resetUploadState(): void {
+    this.state = updateState(
+      this.state,
+      {
+        uploadProgress: null,
+        uploadedSize: 0,
+        totalSize: 0,
+      },
+      this.ngZone,
+      this.cdr
+    );
+  }
 
-      this.toast.show('Video subido exitosamente', 'success');
-      this.loadVideos(userEmailKey);
-    } catch (error) {
-      handleError('Error al subir el video', error, this.toast, this.ngZone);
-    } finally {
-      this.state = updateState(
-        this.state,
-        {
-          uploadProgress: null,
-          uploadedSize: 0,
-          totalSize: 0,
-          isLoading: false
+  private handleUploadError(error: any): void {
+    this.ngZone.run(() => {
+      this.toast.show('Error al subir el video', 'error');
+      this.resetUploadState();
+    });
+  }
+
+  toggleExpansion(videoUrl: string): void {
+    this.state = updateState(
+      this.state,
+      {
+        expandedStates: {
+          ...this.state.expandedStates,
+          [videoUrl]: !this.state.expandedStates[videoUrl],
         },
-        this.ngZone,
-        this.cdr
-      );
-    }
+      },
+      this.ngZone,
+      this.cdr
+    );
+  }
+
+  confirmDeleteVideo(videoUrl: string): void {
+    this.confirmationModal.show(
+      {
+        title: 'Eliminar Video',
+        message: '¿Estás seguro de que deseas eliminar este video?',
+      },
+      () => this.deleteVideo(videoUrl)
+    );
   }
 
   private async deleteVideo(videoUrl: string): Promise<void> {
@@ -163,7 +193,9 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
 
     try {
       await this.videoService.deleteVideo(videoUrl);
-      const updatedVideos = this.state.userVideos.filter(vid => vid !== videoUrl);
+      const updatedVideos = this.state.userVideos.filter(
+        (vid) => vid !== videoUrl
+      );
       await updateUserVideos(
         updatedVideos,
         this.currentUser!,
@@ -184,10 +216,7 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   }
 
   private setupVideoPlayers(): void {
-    setupVideoPlayers(
-      this.videoPlayers,
-      (e: Event) => this.onVideoPlay(e)
-    );
+    setupVideoPlayers(this.videoPlayers, (e: Event) => this.onVideoPlay(e));
   }
 
   private onVideoPlay(event: Event): void {
@@ -201,7 +230,7 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
       this.ngZone,
       this.cdr
     );
-    
+
     try {
       const videos = await this.videoService.getVideos(userEmailKey);
       const sortedVideos = sortVideosByDate(videos);
@@ -209,14 +238,14 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
         sortedVideos,
         this.videoService
       );
-      
+
       this.state = updateState(
         this.state,
         {
           userVideos: sortedVideos,
           expandedStates: initExpandedStates(sortedVideos),
           totalUploadedMB,
-          isLoading: false
+          isLoading: false,
         },
         this.ngZone,
         this.cdr
@@ -232,19 +261,17 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private updateUploadProgress({ progress, uploaded, total }: UploadProgress): void {
-    this.state = updateState(
-      this.state,
-      {
-        uploadProgress: progress,
-        uploadedSize: uploaded,
-        totalSize: total
-      },
-      this.ngZone,
-      this.cdr
-    );
+  handleUploadComplete(downloadURL: string): void {
+    if (!this.currentUser || !this.userEmailKey) return;
+
+    this.ngZone.run(() => {
+      updateUserVideos(
+        [...this.state.userVideos, downloadURL],
+        this.currentUser!,
+        this.firebaseService
+      ).then(() => this.loadVideos(this.userEmailKey!));
+    });
   }
 
-  // Helper para el template (trackBy function)
   trackByVideoUrl = trackByVideoUrl;
 }

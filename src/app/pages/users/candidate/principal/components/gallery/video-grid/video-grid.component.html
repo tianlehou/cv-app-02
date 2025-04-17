@@ -1,31 +1,19 @@
-<div class="gallery-grid">
-    <!-- mostrar total de espacio subido -->
-    <div class="gallery-info">
-        <span>Total de espacio utilizado: {{ state.totalUploadedMB | number:'1.2-2' }} MB</span>
-    </div>
-    <!-- Upload Button & Progress -->
-    <div class="upload-container">
-        <div *ngIf="state.uploadProgress === null; else progressTemplate" class="upload-button">
-            <label for="video-upload">
-                <i class="fas fa-plus"></i> Subir video
-            </label>
-            <input id="video-upload" type="file" accept="video/*" hidden (click)="$event.stopPropagation()"
-                (change)="onFileSelected($event)">
-        </div>
-        <ng-template #progressTemplate>
-            <div class="upload-progress">
-                <div class="progress-bar" [ngStyle]="{ 'width': state.uploadProgress + '%' }">
-                    {{ state.uploadProgress }}%
-                </div>
-                <div class="progress-size">
-                    {{ state.uploadedSize | filesize }} de {{ state.totalSize | filesize }}
-                </div>
-            </div>
-        </ng-template>
-    </div>
+<div class="top-row">
+    <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
+    <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
+        (fileSelected)="handleFileSelected($event)">
+    </app-video-upload-button>
+</div>
 
+<!-- Upload Progress -->
+<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null" [uploadProgress]="state.uploadProgress"
+    [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
+</app-video-upload-progress-bar>
+
+<div class="gallery-grid">
     <!-- Videos Grid -->
-    <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item" [ngClass]="{'expanded': state.expandedStates[video]}">
+    <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
+        [ngClass]="{'expanded': state.expandedStates[video]}">
         <video controls #videoPlayer>
             <source [src]="video" type="video/mp4">
             Tu navegador no soporta videos.

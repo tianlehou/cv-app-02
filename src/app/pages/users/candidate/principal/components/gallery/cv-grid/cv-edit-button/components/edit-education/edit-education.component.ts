@@ -11,14 +11,12 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
+import { EducationInfoComponent } from './education-info/education-info.component';
 
 @Component({
   selector: 'app-edit-education',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, EducationInfoComponent],
   templateUrl: './edit-education.component.html',
   styleUrls: ['./edit-education.component.css'],
 })
@@ -28,6 +26,7 @@ export class EditEducationComponent implements OnInit {
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   educationIndexToDelete: number | null = null;
+  showInfoComponent = false;
 
   constructor(
     private fb: FormBuilder,
@@ -95,7 +94,10 @@ export class EditEducationComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (!this.profileForm.valid || !this.userEmail) {
-      this.toastService.show('Datos inválidos o usuario no autenticado', 'error');
+      this.toastService.show(
+        'Datos inválidos o usuario no autenticado',
+        'error'
+      );
       return;
     }
 
@@ -112,11 +114,17 @@ export class EditEducationComponent implements OnInit {
         profileData: updatedProfileData,
       });
 
-      this.toastService.show('Datos de educación actualizados correctamente', 'success');
+      this.toastService.show(
+        'Datos de educación actualizados correctamente',
+        'success'
+      );
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      this.toastService.show('Error al guardar los datos. Por favor, inténtalo nuevamente.', 'error');
+      this.toastService.show(
+        'Error al guardar los datos. Por favor, inténtalo nuevamente.',
+        'error'
+      );
     }
   }
 
@@ -157,11 +165,16 @@ export class EditEducationComponent implements OnInit {
 
         this.toastService.show('Educación eliminada correctamente', 'success');
       } catch (error) {
-        console.error('Error al sincronizar los datos con la base de datos:', error);
+        console.error(
+          'Error al sincronizar los datos con la base de datos:',
+          error
+        );
         this.toastService.show('Error al eliminar la educación', 'error');
       }
     } else {
-      console.error('Usuario no autenticado. No se puede actualizar la base de datos.');
+      console.error(
+        'Usuario no autenticado. No se puede actualizar la base de datos.'
+      );
     }
   }
 
@@ -170,7 +183,7 @@ export class EditEducationComponent implements OnInit {
     this.confirmationModalService.show(
       {
         title: 'Eliminar Educación',
-        message: '¿Estás seguro de que deseas eliminar esta educación?'
+        message: '¿Estás seguro de que deseas eliminar esta educación?',
       },
       () => this.onDeleteConfirmed()
     );
@@ -181,5 +194,15 @@ export class EditEducationComponent implements OnInit {
       this.removeEducation(this.educationIndexToDelete);
     }
     this.educationIndexToDelete = null;
+  }
+
+  // método para abrir about-me-info
+  openInfoModal(): void {
+    this.showInfoComponent = true;
+  }
+
+  // método para cerrar about-me-info
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
   }
 }

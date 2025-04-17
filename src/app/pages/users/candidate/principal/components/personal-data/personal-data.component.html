@@ -4,18 +4,19 @@
     <p id="profesion">{{ profileForm.get("profesion")?.value || "No especificado" }}</p>
 
     <div class="icon-field">
-      <i class="fas fa-phone"></i>
-      <p id="phone">{{ profileForm.get("phone")?.value || "No especificado" }}</p>
+      <i class="fas fa-map-marker-alt" style="color: var(--clr-blue);"></i>
+      <p id="direction">{{ profileForm.get("direction")?.value || "No especificado" }}</p>
     </div>
 
     <div class="icon-field">
-      <i class="fas fa-envelope"></i>
+      <i class="fas fa-envelope" style="color: var(--clr-yellow);"></i>
       <p id="editableEmail">{{ profileForm.get("editableEmail")?.value || "No especificado" }}</p>
     </div>
 
     <div class="icon-field">
-      <i class="fas fa-map-marker-alt"></i>
-      <p id="direction">{{ profileForm.get("direction")?.value || "No especificado" }}</p>
+      <i class="fas fa-phone" style="color: var(--clr-green);"></i>
+      <p id="phone">{{ profileForm.get("phone")?.value || "No especificado" }}</p>
     </div>
+
   </div>
 </div>

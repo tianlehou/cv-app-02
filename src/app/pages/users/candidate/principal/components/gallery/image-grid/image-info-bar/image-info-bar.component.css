@@ -3,10 +3,11 @@
     align-items: center;
     justify-content: center;
     padding: 8px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    background: var(--clr-white);
-    border: 1px solid var(--bg-light);
+    color: var(--clr-yellow-dark);
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid var(--clr-yellow-light);
     border-radius: 8px;
     height: 40px;
 }

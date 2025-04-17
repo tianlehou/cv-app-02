@@ -1,55 +1,49 @@
+/* Contenedor principal */
 .cv-info-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background: white;
-    height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
 
-    span {
-        text-align: right;
-        width: 100%;
-        min-width: 50px;
-    }
-  }
-  
-  .title {
-    font-weight: 500;
-    margin-right: 0.5rem;
-  }
-  
-  .cv-button {
-    width: 90px;
-    padding: 8px 0;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
+.button-container {
+  display: flex;
+  width: 100%;
+  max-width: 800px;
+  gap: 8px;
+  border-radius: 12px;
+}
 
-  }
-  
-  .cv-button.canvas {
-    border-radius: 8px 0 0 8px;
-    background: linear-gradient(
-        90deg,
-        var(--clr-red) 0%,
-        var(--clr-purple-dark) 100%
-    );
-  }
-  
-  .cv-button.ats {
-    border-radius: 0 8px 8px 0;
-    background: linear-gradient(
-        90deg,
-        var(--clr-purple-dark) 0%,
-        var(--clr-blue) 100%
-    );
-  }
-  
-  .cv-button:hover {
-    opacity: 0.9;
-    transform: translateY(-15px);
-  }
+/* Estilo moderno minimalista para los botones */
+.cv-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: var(--clr-purple-dark);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--clr-purple-light);
+  border-radius: 8px;
+  background: var(--bg-purple);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Efecto hover moderno */
+.cv-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto al hacer click */
+.cv-button:active {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.02);
+}

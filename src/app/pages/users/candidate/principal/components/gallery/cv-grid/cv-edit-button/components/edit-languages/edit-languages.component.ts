@@ -10,14 +10,12 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
+import { LanguagesInfoComponent } from './languages-info/languages-info.component';
 
 @Component({
   selector: 'app-edit-languages',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, LanguagesInfoComponent],
   templateUrl: './edit-languages.component.html',
   styleUrls: ['./edit-languages.component.css'],
 })
@@ -27,6 +25,7 @@ export class EditLanguagesComponent implements OnInit {
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   languageIndexToDelete: number | null = null;
+  showInfoComponent = false;
 
   constructor(
     private fb: FormBuilder,
@@ -153,12 +152,19 @@ export class EditLanguagesComponent implements OnInit {
           profileData: updatedProfileData,
         });
 
-        console.log('Idioma eliminado y datos sincronizados con la base de datos.');
+        console.log(
+          'Idioma eliminado y datos sincronizados con la base de datos.'
+        );
       } catch (error) {
-        console.error('Error al sincronizar los datos con la base de datos:', error);
+        console.error(
+          'Error al sincronizar los datos con la base de datos:',
+          error
+        );
       }
     } else {
-      console.error('Usuario no autenticado. No se puede actualizar la base de datos.');
+      console.error(
+        'Usuario no autenticado. No se puede actualizar la base de datos.'
+      );
     }
   }
 
@@ -167,7 +173,7 @@ export class EditLanguagesComponent implements OnInit {
     this.ConfirmationModalService.show(
       {
         title: 'Eliminar Idioma',
-        message: '¿Estás seguro de que deseas eliminar este idioma?'
+        message: '¿Estás seguro de que deseas eliminar este idioma?',
       },
       () => this.onDeleteConfirmed()
     );
@@ -179,4 +185,14 @@ export class EditLanguagesComponent implements OnInit {
     }
     this.languageIndexToDelete = null;
   }
+
+    // método para abrir componente-info
+    openInfoModal(): void {
+      this.showInfoComponent = true;
+    }
+  
+    // método para cerrar componente-info
+    toggleInfoView(): void {
+      this.showInfoComponent = !this.showInfoComponent;
+    }
 }

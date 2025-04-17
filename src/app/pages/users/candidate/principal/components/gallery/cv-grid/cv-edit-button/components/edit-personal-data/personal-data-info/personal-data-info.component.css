@@ -99,6 +99,14 @@ header {
     }
   }
 
+  .red {
+    border-left-color: var(--clr-red);
+
+    .fa-ban {
+      background: var(--clr-red);
+    }
+  }
+
   .purple {
     border-left-color: var(--clr-purple);
 

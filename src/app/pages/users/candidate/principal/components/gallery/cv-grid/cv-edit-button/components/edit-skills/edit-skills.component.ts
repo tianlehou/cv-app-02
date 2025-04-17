@@ -10,14 +10,12 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
+import { SkillsInfoComponent } from './skills-info/skills-info.component';
 
 @Component({
   selector: 'app-edit-skills',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule
-  ],
+  imports: [ReactiveFormsModule, CommonModule, SkillsInfoComponent],
   templateUrl: './edit-skills.component.html',
   styleUrls: ['./edit-skills.component.css'],
 })
@@ -27,6 +25,7 @@ export class EditSkillsComponent implements OnInit {
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   skillIndexToDelete: number | null = null;
+  showInfoComponent = false;
 
   constructor(
     private fb: FormBuilder,
@@ -153,12 +152,19 @@ export class EditSkillsComponent implements OnInit {
           profileData: updatedProfileData,
         });
 
-        console.log('Habilidad eliminada y datos sincronizados con la base de datos.');
+        console.log(
+          'Habilidad eliminada y datos sincronizados con la base de datos.'
+        );
       } catch (error) {
-        console.error('Error al sincronizar los datos con la base de datos:', error);
+        console.error(
+          'Error al sincronizar los datos con la base de datos:',
+          error
+        );
       }
     } else {
-      console.error('Usuario no autenticado. No se puede actualizar la base de datos.');
+      console.error(
+        'Usuario no autenticado. No se puede actualizar la base de datos.'
+      );
     }
   }
 
@@ -167,7 +173,7 @@ export class EditSkillsComponent implements OnInit {
     this.ConfirmationModalService.show(
       {
         title: 'Eliminar Habilidad',
-        message: '¿Estás seguro de que deseas eliminar este habilidad?'
+        message: '¿Estás seguro de que deseas eliminar este habilidad?',
       },
       () => this.onDeleteConfirmed()
     );
@@ -178,5 +184,15 @@ export class EditSkillsComponent implements OnInit {
       this.removeSkill(this.skillIndexToDelete);
     }
     this.skillIndexToDelete = null;
+  }
+
+  // método para abrir componente-info
+  openInfoModal(): void {
+    this.showInfoComponent = true;
+  }
+
+  // método para cerrar componente-info
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
   }
 }

@@ -41,3 +41,6 @@ walkthrough.txt
 # System files
 .DS_Store
 Thumbs.db
+
+# environment files
+/environments/*.ts
