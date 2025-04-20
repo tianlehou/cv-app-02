@@ -1,0 +1,45 @@
+/* Contenedor principal - Estilo profesional ATS */
+.profile-container {
+  max-width: 1200px;
+  margin: 0;
+  background: white;
+  color: var(--text-color);
+  font-weight: 300;
+}
+
+.profile-container p {
+  flex: 1;
+  font-size: 20px;
+  font-size: clamp(20px, 3.5vw, 36px);
+  font-weight: 500;
+  color: var(--clr-blue-dark);
+  margin: 4rem 0 0;
+}
+
+.point {
+  width: 5px;
+  height: 5px;
+  margin: 5px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  font-size: clamp(10px, 2.5vw, 16px);
+}
+
+.profesion {
+  display: flex;
+  justify-content: center;
+  padding: 3px;
+  margin: 5px 10px 0;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: var(--clr-blue-dark);
+  border-radius: 4px;
+}

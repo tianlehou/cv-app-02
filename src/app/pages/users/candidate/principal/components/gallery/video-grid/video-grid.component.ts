@@ -112,7 +112,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     console.log('Calling videoService.uploadVideo');
     this.videoService
       .uploadVideo(this.userEmailKey, file, (progress, uploaded, total) => {
-        console.log('Upload progress:', progress, uploaded, total);
         this.ngZone.run(() => {
           this.state = updateState(
             this.state,

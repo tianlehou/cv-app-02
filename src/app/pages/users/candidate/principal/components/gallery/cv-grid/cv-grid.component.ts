@@ -35,7 +35,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     EditPersonalDataComponent,
     EditProfilePictureComponent,
     EditSkillsComponent,
-],
+  ],
   templateUrl: './cv-grid.component.html',
   styleUrls: ['./cv-grid.component.css'],
 })
@@ -48,6 +48,8 @@ export class CvGridComponent implements OnInit {
   showCanvas = false;
   showAts = false;
   showCurriculumInfo = true;
+  activeSection: 'canvas' | 'ats' | null = null;
+  disableInfoBar = false;
 
   constructor(private cdr: ChangeDetectorRef) { }
 
@@ -62,20 +64,28 @@ export class CvGridComponent implements OnInit {
   }
 
   onCanvasClicked() {
-    this.showCanvas = true;
-    this.showAts = false;
-    this.showCurriculumInfo = false;
-    this.cdr.detectChanges();
+    if (!this.showGalleryGrid) { // Solo permite activar si no estamos en edición
+      this.activeSection = 'canvas';
+      this.showCanvas = true;
+      this.showAts = false;
+      this.showCurriculumInfo = false;
+      this.cdr.detectChanges();
+    }
   }
 
   onAtsClicked() {
-    this.showCanvas = false;
-    this.showAts = true;
-    this.showCurriculumInfo = false;
-    this.cdr.detectChanges();
+    if (!this.showGalleryGrid) { // Solo permite activar si no estamos en edición
+      this.activeSection = 'ats';
+      this.showCanvas = false;
+      this.showAts = true;
+      this.showCurriculumInfo = false;
+      this.cdr.detectChanges();
+    }
   }
 
   onOptionSelected(option: string) {
+    this.activeSection = null; // Limpia cualquier selección activa
+    this.disableInfoBar = true; // Deshabilita los botones
     this.selectedComponent = option;
     this.showGalleryGrid = true;
     this.showPrincipalSection = false;
@@ -96,15 +106,15 @@ export class CvGridComponent implements OnInit {
   }
 
   handleBackToPrincipal() {
-    console.log('Recibido backToPrincipal - showGalleryGrid:', this.showGalleryGrid);
+    this.activeSection = null; // Mantiene los botones sin activar
+    this.disableInfoBar = false; // Reactiva los botones
     this.selectedComponent = null;
     this.showGalleryGrid = false;
     this.showPrincipalSection = true;
+    this.showCanvas = false;
+    this.showAts = false;
+    this.showCurriculumInfo = true;
     this.cdr.detectChanges();
-
-    // Opcional: Si necesitas forzar actualización de vista
-    setTimeout(() => {
-      this.cdr.markForCheck();
-    });
   }
 }
+

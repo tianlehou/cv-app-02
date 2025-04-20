@@ -1,19 +1,19 @@
 <div class="top-row">
-  <app-cv-info-bar 
-    (canvasClicked)="onCanvasClicked()" 
+  <app-cv-info-bar
+    [activeButton]="showGalleryGrid ? null : activeSection"
+    [disabled]="disableInfoBar || showGalleryGrid"
+    (canvasClicked)="onCanvasClicked()"
     (atsClicked)="onAtsClicked()">
   </app-cv-info-bar>
-  <app-cv-edit-button
-    (optionSelected)="onOptionSelected($event)"
-    (backToPrincipal)="handleBackToPrincipal()">
+  <app-cv-edit-button (optionSelected)="onOptionSelected($event)" (backToPrincipal)="handleBackToPrincipal()">
   </app-cv-edit-button>
 </div>
 
 <ng-container *ngIf="showPrincipalSection">
   <section #principal>
-    <app-cv-canvas *ngIf="showCanvas"></app-cv-canvas>
-    <app-cv-ats *ngIf="showAts"></app-cv-ats>
     <app-curriculum-types-info *ngIf="showCurriculumInfo"></app-curriculum-types-info>
+    <app-cv-canvas *ngIf="showCanvas"></app-cv-canvas>
+    <app-cv-ats *ngIf="showAts" [currentUser]="currentUser"></app-cv-ats>
   </section>
 </ng-container>
 
