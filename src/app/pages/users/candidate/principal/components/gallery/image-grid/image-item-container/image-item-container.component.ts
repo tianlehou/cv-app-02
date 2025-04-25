@@ -8,12 +8,12 @@ import { User } from '@angular/fire/auth';
 import { EnvironmentInjector } from '@angular/core';
 import { runInInjectionContext } from '@angular/core';
 import { WatermarkComponent } from './watermark/watermark.component';
-import { DeleteButtonComponent } from './delete-button/delete-button.component';
+import { ImageDeleteButtonComponent } from './image-delete-button/image-delete-button.component';
 
 @Component({
   selector: 'app-image-item-container',
   standalone: true,
-  imports: [CommonModule, WatermarkComponent, DeleteButtonComponent],
+  imports: [CommonModule, WatermarkComponent, ImageDeleteButtonComponent],
   templateUrl: './image-item-container.component.html',
   styleUrl: './image-item-container.component.css'
 })
