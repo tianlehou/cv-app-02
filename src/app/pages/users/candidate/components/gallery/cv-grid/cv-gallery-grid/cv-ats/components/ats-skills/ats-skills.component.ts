@@ -66,6 +66,7 @@ export class AtsSkillsComponent implements OnInit {
       const skillGroup = this.fb.group({
         hardSkills: [skill.hardSkills || ''],
         softSkills: [skill.softSkills || ''],
+        languages: [skill.languages || ''],
         certification: [skill.certification || ''],
       });
       formArray.push(skillGroup);

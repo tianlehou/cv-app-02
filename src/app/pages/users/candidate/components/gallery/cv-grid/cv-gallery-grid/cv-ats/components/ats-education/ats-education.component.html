@@ -1,29 +1,27 @@
 <div class="profile-container">
-  <div class="form-group" [formGroup]="profileForm">
-    <label class="bar">Educación:</label>
-    @if (educationArray.length > 0) {
-    <ul class="education-list">
-      @for (edu of educationArray.controls; track $index) {
-      <li>
-        <section class="top-body">
-          <div>
-            <span>{{ edu.get('degree')?.value }}</span>
-          </div>
-          <div>
-            <span>{{ edu.get("year")?.value }}</span>
-          </div>
-        </section>
-        <div>
-          {{ edu.get('institution')?.value }} <br>
+  <label class="bar">Educación:</label>
+  <form [formGroup]="profileForm">
+    <div class="form-group">
+      <div *ngFor="let edu of profileForm.get('education')?.value">
+
+        <!-- Título -->
+        <div *ngIf="edu.degree">
+          <strong>{{ edu.degree || "No especificado" }}</strong>
         </div>
-        @if (!$last) {
-        <div class="divider"></div>
-        }
-      </li>
-      }
-    </ul>
-    } @else {
-    <p class="no-education">No se encontraron registros educativos</p>
-    }
-  </div>
+
+        <!-- Universidad - Lugar - Año -->
+        <div>
+          <span *ngIf="edu.institution" style="padding-left: 1rem;">Institución:
+          <label>{{ edu.institution || "No especificado" }}</label></span>
+          <label *ngIf="edu.place"><span style="padding: 0 1rem;">|</span>{{ edu.place || "No especificado" }}</label>
+          <label *ngIf="edu.year"><span style="padding: 0 1rem;">|</span>{{ edu.year || "No especificado" }}</label>
+        </div>
+
+        <!-- Logros -->
+        <div *ngIf="edu.achievements" class="description-text">
+          <span>{{ formatDescription(edu.achievements) }}</span>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
