@@ -36,7 +36,6 @@ export class EditEducationComponent implements OnInit, OnDestroy {
   editableFields: { [key: string]: boolean } = {};
   educationIndexToDelete: number | null = null;
   activeDeleteButton: number | null = null;
-  showInfoComponent = false;
   formHasChanges: boolean = false;
   private initialFormValue: any;
   private formSubscription: Subscription | null = null;
@@ -259,14 +258,6 @@ export class EditEducationComponent implements OnInit, OnDestroy {
         this.educationIndexToDelete = null;
       }
     );
-  }
-
-  openInfoModal(): void {
-    this.showInfoComponent = true;
-  }
-
-  toggleInfoView(): void {
-    this.showInfoComponent = !this.showInfoComponent;
   }
 
   onCancel(): void {
