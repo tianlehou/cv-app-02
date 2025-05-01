@@ -10,7 +10,7 @@
   border-radius: 8px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
              -4px -4px 8px rgba(255, 255, 255, 0.5);
-  transition: all 0.3s ease;
+  transition: all 1.5s ease-out;
   margin: 0 1rem;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -33,7 +33,7 @@
   background: rgba(255, 255, 255, 0.7); /* Fondo blanco translúcido */
   color: var(--text-color-dark);
   transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
+  transition: transform 1.5s ease-out;
   z-index: 9999;
   backdrop-filter: blur(10px);
   border-right: 1px solid rgba(255, 255, 255, 0.5);
@@ -73,7 +73,7 @@
   cursor: pointer;
   width: 32px;
   height: 32px;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1),
              -3px -3px 6px rgba(255, 255, 255, 0.5);
