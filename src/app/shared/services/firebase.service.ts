@@ -11,7 +11,13 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from '@angular/fire/auth';
-import { Database, ref, set, get, update } from '@angular/fire/database';
+import {
+  Database,
+  ref,
+  set,
+  get,
+  update,
+} from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
 
@@ -59,11 +65,40 @@ export class FirebaseService {
     );
   }
 
-  saveUserData(email: string, data: { fullName: string; email: string }) {
-    return runInInjectionContext(this.injector, () => {
+  async saveUserData(
+    email: string,
+    data: {
+      email: string;
+      role: string;
+      enabled: boolean;
+      createdAt: string;
+    }
+  ) {
+    return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
-      const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-      return set(userRef, data);
+
+      // Guardar TODOS los datos en metadata
+      const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+      await set(metadataRef, {
+        email: data.email,
+        role: data.role,
+        enabled: data.enabled,
+        createdAt: data.createdAt,
+      });
+    });
+  }
+
+  async saveFullName(email: string, fullName: string) {
+    return runInInjectionContext(this.injector, async () => {
+      const userEmailKey = this.formatEmailKey(email);
+      const personalDataRef = ref(
+        this.db,
+        `cv-app/users/${userEmailKey}/profileData/personalData`
+      );
+
+      await set(personalDataRef, {
+        fullName: fullName
+      });
     });
   }
 
@@ -74,13 +109,18 @@ export class FirebaseService {
   async getCurrentUser() {
     return runInInjectionContext(this.injector, async () => {
       const user = this.auth.currentUser;
-      if (user?.email) {
-        const userEmailKey = this.formatEmailKey(user.email);
+      if (user) {
+        const userEmailKey = this.formatEmailKey(user.email!);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-        const snapshot = await runInInjectionContext(this.injector, () =>
-          get(userRef)
-        );
-        return snapshot.exists() ? snapshot.val() : null;
+        
+        const userSnapshot = await get(userRef);
+        if (userSnapshot.exists()) {
+          return {
+            ...userSnapshot.val(),
+            email: user.email // Ensure email is included
+          };
+        }
+        return null;
       }
       return null;
     });
@@ -92,18 +132,21 @@ export class FirebaseService {
 
   async getUserData(emailKey: string): Promise<any> {
     return runInInjectionContext(this.injector, async () => {
-      const userRef = ref(this.db, `cv-app/users/${emailKey}`);
       try {
-        const snapshot = await runInInjectionContext(this.injector, () =>
-          get(userRef)
-        );
-        return snapshot.exists() ? snapshot.val() : null;
+        const userRef = ref(this.db, `cv-app/users/${emailKey}`);
+        const userSnapshot = await get(userRef);
+  
+        if (!userSnapshot.exists()) {
+          throw new Error('Datos de usuario no encontrados');
+        }
+        
+        return userSnapshot.val();
       } catch (error) {
         console.error('Error al obtener datos:', error);
-        throw error;
+        throw new Error('No tienes permisos para acceder a estos datos');
       }
     });
-  }
+}
 
   async getComponentStyles(
     email: string,
@@ -146,17 +189,15 @@ export class FirebaseService {
   async updateUserData(
     originalEmail: string,
     data: Partial<{
-      createdAt: string;
-      email: string;
-      enabled: boolean;
-      fullName: string;
-      lastLogin?: string;
-      lastUpdated?: string;
-      profileData: {
-        direction?: string;
-        editableEmail?: string;
-        phone?: string;
-        profesion?: string;
+      metadata?: Partial<{ 
+        createdAt?: string;
+        email: string;
+        enabled: boolean;
+        lastLogin?: string;
+        lastUpdated?: string;
+        role?: string;
+      }>;
+      profileData?: {
         aboutMe?: string;
         education?: string;
         experience?: string;
@@ -168,10 +209,15 @@ export class FirebaseService {
           galleryImages?: string[];
           galleryVideos?: string[];
         };
-        personalData?: string;
+        personalData?: {
+          direction?: string;
+          editableEmail?: string;
+          fullName: string;
+          phone?: string;
+          profesion?: string;
+        };
         skills?: string;
       };
-      role: string;
       'cv-styles'?: {
         [key: string]: ComponentStyles;
       };
@@ -179,9 +225,26 @@ export class FirebaseService {
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(originalEmail);
-      const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+
       try {
-        await runInInjectionContext(this.injector, () => update(userRef, data));
+        // Si hay datos de metadata, actualizarlos en la ruta metadata
+        if (data.metadata) {
+          const metadataRef = ref(
+            this.db,
+            `cv-app/users/${userEmailKey}/metadata`
+          );
+          await update(metadataRef, data.metadata);
+        }
+
+        // Actualizar los demás datos si hay algo que actualizar
+        if (data.profileData || data['cv-styles']) {
+          const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+          await update(userRef, {
+            ...(data.profileData && { profileData: data.profileData }),
+            ...(data['cv-styles'] && { 'cv-styles': data['cv-styles'] }),
+          });
+        }
+
         console.log('Datos actualizados exitosamente');
       } catch (error) {
         console.error('Error al actualizar:', error);

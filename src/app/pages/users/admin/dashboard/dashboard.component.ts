@@ -48,15 +48,33 @@ export class AdminDashboardComponent implements OnInit {
     const usersRef = ref(this.firebaseService['db'], 'cv-app/users');
     const snapshot = await get(usersRef);
     this.users = [];
-    snapshot.forEach((childSnapshot) => {
-      const user = childSnapshot.val();
-      this.users.push({
-        key: childSnapshot.key,
-        ...user,
-        createdAt: user.createdAt ? new Date(user.createdAt) : null,
-        lastLogin: user.lastLogin ? new Date(user.lastLogin) : null
+    
+    if (snapshot.exists()) {
+      const usersObject = snapshot.val();
+      
+      const userPromises = Object.keys(usersObject).map(async (userKey) => {
+        const userData = usersObject[userKey];
+        
+        const metadataRef = ref(this.firebaseService['db'], `cv-app/users/${userKey}/metadata`);
+        const metadataSnapshot = await get(metadataRef);
+        const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
+        
+        // Asegurar que los campos básicos existan
+        return {
+          key: userKey,
+          email: metadata.email || '', // Valor por defecto si no existe
+          fullName: userData?.profileData?.personalData?.fullName || '', // Valor por defecto si no existe
+          role: metadata.role || 'candidate', // Valor por defecto si no existe
+          enabled: metadata.enabled !== undefined ? metadata.enabled : true, // Valor por defecto si no existe
+          ...userData,
+          createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
+          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null
+        };
       });
-    });
+      
+      this.users = await Promise.all(userPromises);
+    }
+    
     this.applyFilters();
   }
 
@@ -84,7 +102,7 @@ export class AdminDashboardComponent implements OnInit {
       lastUpdated: new Date().toISOString()
     };
 
-    await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}`), updates);
+    await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}/metadata`), updates);
     user.enabled = !user.enabled;
   }
 

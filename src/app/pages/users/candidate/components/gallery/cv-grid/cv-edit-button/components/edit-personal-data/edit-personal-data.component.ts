@@ -170,11 +170,11 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
       const userData = await this.firebaseService.getUserData(userEmailKey);
 
       const updatedData = {
-        fullName: this.profileForm.value.fullName,
         profileData: {
           ...userData?.profileData,
           personalData: {
             ...userData?.profileData?.personalData,
+            fullName: this.profileForm.value.fullName,
             profesion: this.profileForm.value.profesion,
             phone: this.profileForm.value.phone,
             editableEmail: this.profileForm.value.editableEmail,
