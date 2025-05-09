@@ -5,14 +5,15 @@ import { User } from '@angular/fire/auth';
 import { PersonalDataService } from '../../../../../../../../services/personal-data.service';
 
 @Component({
-  selector: 'app-ats-personal-data',
+  selector: 'app-canvas-001-personal-data',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './ats-personal-data.component.html',
-  styleUrls: ['./ats-personal-data.component.css'],
+  templateUrl: './canvas-001-personal-data.component.html',
+  styleUrls: ['./canvas-001-personal-data.component.css'],
 })
-export class AtsPersonalDataComponent implements OnInit {
+export class Canvas001PersonalDataComponent implements OnInit {
   @Input() currentUser: User | null = null;
+  @Input() displayMode: 'header' | 'sidebar' = 'header';
   profileForm!: FormGroup;
 
   constructor(
@@ -39,7 +40,9 @@ export class AtsPersonalDataComponent implements OnInit {
 
   private async loadUserData(): Promise<void> {
     try {
-      const personalData = await this.personalDataService.loadUserData(this.currentUser);
+      const personalData = await this.personalDataService.loadUserData(
+        this.currentUser
+      );
       this.profileForm.patchValue(personalData || {});
     } catch (error) {
       console.error('Error al cargar datos personales:', error);
