@@ -30,7 +30,7 @@
             ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
           }
         }
-      }
+      },
       
       
       "referrals": {

@@ -307,10 +307,14 @@ export class FirebaseService {
       const referredEmailKey = this.formatEmailKey(referredEmail);
       const timestamp = new Date().toISOString();
 
-      // 1. Actualizar contador y lista en nodo referrals
+      // 1. Primero obtener el conteo actual
       const referralRef = ref(this.db, `cv-app/referrals/${referrerId}`);
+      const snapshot = await get(referralRef);
+      const currentCount = snapshot.exists() ? (snapshot.val().count || 0) : 0;
+
+      // 2. Actualizar con el nuevo valor calculado
       await update(referralRef, {
-        count: increment(1),
+        count: currentCount + 1,
         [`referrals/${referredEmailKey}`]: {
           email: referredEmail,
           timestamp: timestamp,
@@ -318,18 +322,23 @@ export class FirebaseService {
         }
       });
 
-      // 2. Actualizar contador en metadata del referente (si es usuario existente)
+      // 3. Actualizar contador en metadata del referente
       const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
       if (referrerEmailKey) {
         const userRef = ref(this.db, `cv-app/users/${referrerEmailKey}/metadata`);
+        const userSnapshot = await get(ref(this.db, `cv-app/users/${referrerEmailKey}/metadata`));
+        const currentUserCount = userSnapshot.exists() ? (userSnapshot.val().referralCount || 0) : 0;
+
         await update(userRef, {
-          referralCount: increment(1)
+          referralCount: currentUserCount + 1
         });
       }
     });
   }
 
   private async getEmailKeyByUserId(userId: string): Promise<string | null> {
+    if (!userId) return null;
+
     const usersRef = ref(this.db, 'cv-app/users');
     const snapshot = await get(usersRef);
 
