@@ -15,6 +15,10 @@ import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
 
+const increment = (delta: number) => {
+  return (current: number) => (current || 0) + delta;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -89,8 +93,13 @@ export class FirebaseService {
         role: data.role,
         enabled: data.enabled,
         createdAt: data.createdAt,
-        ...(data.referredBy && { referredBy: data.referredBy })
+        ...(data.referredBy && { referredBy: data.referredBy }),
+        referralCount: 0
       });
+
+      if (data.referredBy) {
+        await this.addReferral(data.referredBy, email);
+      }
     });
   }
 
@@ -291,5 +300,63 @@ export class FirebaseService {
   clearReferralId() {
     this.referralSource.next(null);
     localStorage.removeItem('referralId');
+  }
+
+  async addReferral(referrerId: string, referredEmail: string): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      const referredEmailKey = this.formatEmailKey(referredEmail);
+      const timestamp = new Date().toISOString();
+
+      // 1. Actualizar contador y lista en nodo referrals
+      const referralRef = ref(this.db, `cv-app/referrals/${referrerId}`);
+      await update(referralRef, {
+        count: increment(1),
+        [`referrals/${referredEmailKey}`]: {
+          email: referredEmail,
+          timestamp: timestamp,
+          converted: true
+        }
+      });
+
+      // 2. Actualizar contador en metadata del referente (si es usuario existente)
+      const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
+      if (referrerEmailKey) {
+        const userRef = ref(this.db, `cv-app/users/${referrerEmailKey}/metadata`);
+        await update(userRef, {
+          referralCount: increment(1)
+        });
+      }
+    });
+  }
+
+  private async getEmailKeyByUserId(userId: string): Promise<string | null> {
+    const usersRef = ref(this.db, 'cv-app/users');
+    const snapshot = await get(usersRef);
+
+    if (snapshot.exists()) {
+      const users = snapshot.val();
+      for (const emailKey in users) {
+        if (users[emailKey]?.metadata?.userId === userId) {
+          return emailKey;
+        }
+      }
+    }
+    return null;
+  }
+
+  async getReferralStats(userId: string): Promise<{ count: number, referrals: any[] }> {
+    return runInInjectionContext(this.injector, async () => {
+      const referralRef = ref(this.db, `cv-app/referrals/${userId}`);
+      const snapshot = await get(referralRef);
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        return {
+          count: data.count || 0,
+          referrals: Object.values(data.referrals || {})
+        };
+      }
+      return { count: 0, referrals: [] };
+    });
   }
 }

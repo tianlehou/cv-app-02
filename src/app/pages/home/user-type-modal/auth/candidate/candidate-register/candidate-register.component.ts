@@ -73,38 +73,34 @@ export class CandidateRegisterComponent implements OnInit {
         // 1. Registrar usuario en Firebase Auth
         await this.firebaseService.registerWithEmail(email, password);
 
-        // 2. Guardar datos básicos en metadata
-        await this.firebaseService.saveUserData(email, {
+        // 2. Preparar datos del usuario
+        const userData = {
           email,
           role: 'candidate',
           enabled: true,
           createdAt: new Date().toISOString(),
-        });
-
-        // Crear objeto userData
-        const userData: any = {
-          email,
-          role: 'candidate',
-          enabled: true,
-          createdAt: new Date().toISOString(),
+          ...(referredBy && { referredBy }) // Solo añadir si existe referredBy
         };
 
-        // Añadir referredBy solo si existe
-        if (referredBy) {
-          userData.referredBy = referredBy;
-        }
-
-        // Guardar datos básicos en metadata
+        // 3. Guardar datos básicos (esto ahora maneja automáticamente los referidos)
         await this.firebaseService.saveUserData(email, userData);
 
-        // 3. Guardar fullName en profileData/personalData
+        // 4. Guardar nombre completo
         await this.firebaseService.saveFullName(email, fullName);
+
+        // 5. Si hay referido, mostrar mensaje especial
+        if (referredBy) {
+          this.toastService.show(
+            `¡Registro exitoso! Has sido referido por ${referredBy}`,
+            'success',
+            5000
+          );
+        } else {
+          this.toastService.show('Usuario registrado con éxito', 'success', 5000);
+        }
 
         // Limpiar el referral después de registro exitoso
         this.firebaseService.clearReferralId();
-
-        // Mostrar toast de éxito
-        this.toastService.show('Usuario registrado con éxito', 'success', 5000);
 
         // Cambiar a vista de login después de 0.5 segundos
         setTimeout(() => {
