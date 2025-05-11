@@ -63,7 +63,6 @@ export class CandidateRegisterComponent implements OnInit {
       const { fullName, email, password, confirmPassword, referredBy } =
         this.registerForm.value;
 
-      // Validar que las contraseñas coincidan
       if (password !== confirmPassword) {
         this.toastService.show('Las contraseñas no coinciden', 'error', 5000);
         return;
@@ -71,64 +70,48 @@ export class CandidateRegisterComponent implements OnInit {
 
       try {
         // 1. Registrar usuario en Firebase Auth
-        await this.firebaseService.registerWithEmail(email, password);
-
-        // 2. Preparar datos del usuario
-        const userData = {
+        const userCredential = await this.firebaseService.registerWithEmail(
           email,
-          role: 'candidate',
-          enabled: true,
-          createdAt: new Date().toISOString(),
-          ...(referredBy && { referredBy }) // Solo añadir si existe referredBy
-        };
+          password
+        );
 
-        // 3. Guardar datos básicos (esto ahora maneja automáticamente los referidos)
-        await this.firebaseService.saveUserData(email, userData);
+        // Pequeña pausa para asegurar propagación
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
-        // 4. Guardar nombre completo
-        await this.firebaseService.saveFullName(email, fullName);
+        // 2. Inicializar toda la estructura del usuario de una vez
+        await this.firebaseService.initializeUserData(email, {
+          profileData: {
+            personalData: {
+              fullName: fullName,
+            },
+          },
+          metadata: {
+            email: email,
+            role: 'candidate',
+            enabled: true,
+            createdAt: new Date().toISOString(),
+            ...(referredBy && { referredBy }),
+          },
+        });
 
-        // 5. Si hay referido, mostrar mensaje especial
-        if (referredBy) {
-          this.toastService.show(
-            `¡Registro exitoso! Has sido referido por ${referredBy}`,
-            'success',
-            5000
-          );
-        } else {
-          this.toastService.show('Usuario registrado con éxito', 'success', 5000);
-        }
+        // Mensaje de éxito
+        const successMessage = referredBy
+          ? `¡Registro exitoso! Has sido referido por ${referredBy}`
+          : 'Usuario registrado con éxito';
 
-        // Limpiar el referral después de registro exitoso
+        this.toastService.show(successMessage, 'success', 5000);
         this.firebaseService.clearReferralId();
 
-        // Cambiar a vista de login después de 0.5 segundos
-        setTimeout(() => {
-          this.showLogin.emit();
-        }, 500);
+        setTimeout(() => this.showLogin.emit(), 500);
       } catch (error: any) {
-        console.error(error);
-
-        // Mapeo de errores de Firebase
-        const errorMessages: { [key: string]: string } = {
-          'auth/email-already-in-use': '¡Este correo ya está en uso!',
-          'auth/invalid-email':
-            'Correo inválido. Verifica que esté bien escrito.',
-          'auth/weak-password':
-            'Contraseña débil. Usa al menos 8 caracteres con letras y números.',
-          'auth/network-request-failed':
-            'Error de conexión. Verifica tu conexión a internet.',
-        };
-
-        const message =
-          errorMessages[error.code as keyof typeof errorMessages] ||
-          '¡Ocurrió un error inesperado durante el registro!';
-
-        // Mostrar mensaje de error con toast
-        this.toastService.show(message, 'error', 5000);
+        console.error('Error completo:', error);
+        this.toastService.show(
+          'Error al registrar: ' + (error.message || 'Desconocido'),
+          'error',
+          5000
+        );
       }
     } else {
-      // Mostrar error de validación de formulario
       this.toastService.show(
         'Por favor completa todos los campos requeridos correctamente',
         'error',

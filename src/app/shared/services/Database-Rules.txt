@@ -9,12 +9,20 @@
         // Reglas para cada usuario individual
         "$userEmailKey": {
           ".read": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
-          ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
           
+          // Modificación clave: Permitir escritura inicial si el nodo no existe (durante registro)
+          ".write": "auth != null &&
+            (auth.token.email.replace('.', '_') == $userEmailKey &&
+            (!data.exists() || 
+                root.child('cv-app/users/'+$userEmailKey+'/metadata').exists()) ||
+                root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )",
+
           // Subnodos específicos
           "metadata": {
             ".read": "auth != null",
-            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
+		root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
             "referralCount": {
               ".validate": "newData.isNumber() && newData.val() >= 0"
             }
@@ -32,14 +40,14 @@
         }
       },
       
-      
       "referrals": {
         ".read": "auth != null",
         ".write": "auth != null",
         
         "$referrerId": {
           ".read": "auth != null",
-          ".write": "auth != null && (auth.token.uid == $referrerId || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          ".write": "auth != null && (auth.token.uid == $referrerId ||
+		root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
           
           "count": {
             ".validate": "newData.isNumber() && newData.val() >= 0"
