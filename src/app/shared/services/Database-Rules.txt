@@ -21,8 +21,7 @@
           // Subnodos específicos
           "metadata": {
             ".read": "auth != null",
-            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
-		root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
             "referralCount": {
               ".validate": "newData.isNumber() && newData.val() >= 0"
             }
@@ -46,8 +45,7 @@
         
         "$referrerId": {
           ".read": "auth != null",
-          ".write": "auth != null && (auth.token.uid == $referrerId ||
-		root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          ".write": "auth != null && (auth.token.uid == $referrerId || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
           
           "count": {
             ".validate": "newData.isNumber() && newData.val() >= 0"
