@@ -9,7 +9,8 @@ import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component
 import { DownloadPdfComponent } from '../../../../../../../../../shared/components/download-pdf/download-pdf.component';
 import { StyleControlComponent } from '../../style-control/style-control.component';
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
-import { ComponentStyles } from '../../../../../../../../../shared/models/component-styles.model';
+import { ComponentStyles } from '../../style-control/component-styles.model';
+import { StyleService } from '../../style-control/style-control.service';
 
 @Component({
   selector: 'app-ats-001',
@@ -35,12 +36,15 @@ export class Ats001Component implements OnInit {
     barColor: '#0d6efd',
     fontFamily: 'Arial, sans-serif'
   };
-  constructor(private firebaseService: FirebaseService) { }
+  constructor(
+    private firebaseService: FirebaseService,
+    private styleService: StyleService,
+  ) { }
 
   async ngOnInit() {
     const currentUser = await this.firebaseService.getCurrentUser();
     if (currentUser?.email) {
-      const savedStyles = await this.firebaseService.getComponentStyles(
+      const savedStyles = await this.styleService.getComponentStyles(
         currentUser.email,
         'ats-001'
       );

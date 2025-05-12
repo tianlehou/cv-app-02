@@ -1,19 +1,15 @@
+// firebase.service.ts
 import {
   Injectable,
   inject,
   runInInjectionContext,
   EnvironmentInjector,
 } from '@angular/core';
-import {
-  Auth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from '@angular/fire/auth';
 import { Database, ref, set, get, update } from '@angular/fire/database';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ComponentStyles } from '../models/component-styles.model';
+import { BehaviorSubject } from 'rxjs';
+import { ComponentStyles } from '../../pages/users/candidate/components/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
+import { AuthService } from '../../pages/home/user-type-modal/auth/auth.service';
+import { FirebaseConfigService } from './firebase-config.service';
 
 const increment = (delta: number) => {
   return (current: number) => (current || 0) + delta;
@@ -23,54 +19,37 @@ const increment = (delta: number) => {
   providedIn: 'root',
 })
 export class FirebaseService {
-  private auth = inject(Auth);
   private db = inject(Database);
-  private authState = new BehaviorSubject<boolean>(false);
   private injector = inject(EnvironmentInjector);
+  private authService = inject(AuthService);
+  private firebaseConfig = inject(FirebaseConfigService);
   private referralSource = new BehaviorSubject<string | null>(null);
   currentReferral = this.referralSource.asObservable();
-
-  constructor() {
-    this.monitorAuthState();
-  }
-
-  private monitorAuthState() {
-    runInInjectionContext(this.injector, () => {
-      onAuthStateChanged(this.auth, (user) => {
-        this.authState.next(!!user);
-      });
-    });
-  }
-
-  isAuthenticated(): Observable<boolean> {
-    return this.authState.asObservable();
-  }
 
   public formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
   }
 
-  registerWithEmail(email: string, password: string) {
-    return runInInjectionContext(this.injector, () =>
-      createUserWithEmailAndPassword(this.auth, email, password)
-    );
+  // You can now access the current environment type with:
+  getCurrentEnvironment() {
+    return this.firebaseConfig.getEnvironmentType();
   }
 
-  async loginWithEmail(email: string, password: string) {
+  // Métodos base para operaciones de base de datos
+  getDatabaseRef(path: string) {
+    return ref(this.db, path);
+  }
+
+  async getDatabaseValue(ref: any) {
     return runInInjectionContext(this.injector, async () => {
-      await signInWithEmailAndPassword(this.auth, email, password);
-      return this.getCurrentUser();
+      return get(ref);
     });
   }
 
-  sendPasswordResetEmail(email: string) {
-    return runInInjectionContext(this.injector, () =>
-      sendPasswordResetEmail(this.auth, email)
-    );
-  }
-
-  logout() {
-    runInInjectionContext(this.injector, () => this.auth.signOut());
+  async setDatabaseValue(ref: any, value: any) {
+    return runInInjectionContext(this.injector, async () => {
+      return set(ref, value);
+    });
   }
 
   // Método corregido con runInInjectionContext
@@ -104,7 +83,6 @@ export class FirebaseService {
 
       // Logs de diagnóstico
       console.log('Guardando metadata para:', email);
-      console.log('Usuario autenticado:', this.auth.currentUser?.email);
       console.log('Ruta metadata:', `cv-app/users/${userEmailKey}/metadata`);
 
       const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
@@ -160,9 +138,9 @@ export class FirebaseService {
 
   async getCurrentUser() {
     return runInInjectionContext(this.injector, async () => {
-      const user = this.auth.currentUser;
-      if (user) {
-        const userEmailKey = this.formatEmailKey(user.email!);
+      const user = this.authService.getCurrentAuthUser();
+      if (user && user.email) {
+        const userEmailKey = this.formatEmailKey(user.email);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
 
         const userSnapshot = await get(userRef);
@@ -193,7 +171,6 @@ export class FirebaseService {
             email: user.email,
           };
         }
-        return null;
       }
       return null;
     });
@@ -218,44 +195,6 @@ export class FirebaseService {
         console.error('Error al obtener datos:', error);
         throw new Error('No tienes permisos para acceder a estos datos');
       }
-    });
-  }
-
-  async getComponentStyles(
-    email: string,
-    componentName: string
-  ): Promise<ComponentStyles | null> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const stylesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/${componentName}`
-      );
-      const snapshot = await get(stylesRef);
-      return snapshot.exists() ? (snapshot.val() as ComponentStyles) : null;
-    });
-  }
-
-  async getColorFavorites(email: string): Promise<string[]> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const favoritesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
-      );
-      const snapshot = await get(favoritesRef);
-      return snapshot.exists() ? (snapshot.val() as string[]) : [];
-    });
-  }
-
-  async saveColorFavorites(email: string, colors: string[]): Promise<void> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const favoritesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
-      );
-      await set(favoritesRef, colors);
     });
   }
 
