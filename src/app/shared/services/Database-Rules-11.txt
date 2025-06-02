@@ -70,10 +70,19 @@
         ".write": "auth != null", // Permite escritura a cualquier usuario autenticado
         
         "$referrerEmailKey": {
-          ".read": "auth != null",
-          ".write": "auth != null && 
-            auth.token.email.replace('.', '_') != $referredEmailKey &&
-            root.child('cv-app/users/'+$referredEmailKey+'/metadata/referredBy').val() == auth.token.email.replace('.', '_')",
+          ".read": "auth != null && (
+            auth.token.email.replace('.', '_') == $referrerEmailKey ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+          )",
+
+          ".write": "auth != null && (
+
+            // Permite al referente actualizar sus propios referidos
+            auth.token.email.replace('.', '_') == $referrerEmailKey ||
+            
+            // Permite al referido actualizar su propia entrada (para suscripciones)
+            newData.child('email').val() == auth.token.email
+          )",
           
           "count": {
             ".validate": "newData.isNumber() && newData.val() >= 0"
@@ -86,19 +95,28 @@
               "email": {
                 ".validate": "newData.isString() && newData.val().matches(/^[^@]+@[^@]+\\.[^@]+$/)"
               },
+
               "timestamp": {
                 ".validate": "newData.isString()"
               },
+
               "fullName": {
                 ".validate": "newData.isString()"
               },
+
               "subscriptionAmount": {
                 ".validate": "newData.isNumber() && newData.val() >= 0"
               },
+
               "subscribed": {
                 ".validate": "newData.isBoolean()"
               },
+
               "subscriptionDate": {
+                ".validate": "newData.isString() || newData.val() == null"
+              },
+
+              "planId": {
                 ".validate": "newData.isString() || newData.val() == null"
               }
             }
