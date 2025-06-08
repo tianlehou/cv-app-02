@@ -10,6 +10,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { AuthService } from '../../auth.service';
 import { UserCredential } from '@angular/fire/auth';
+import { ToastService } from 'src/app/shared/services/toast.service'; // Añade esta importación
 
 @Component({
   selector: 'app-business-login',
@@ -24,15 +25,13 @@ export class BusinessLoginComponent {
   @Output() showHome = new EventEmitter<void>();
   loginForm: FormGroup;
   showPassword = false;
-  successMessage: string | null = null;
-  emailErrorMessage: string | null = null;
-  passwordErrorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private firebaseService: FirebaseService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService // Inyecta el ToastService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -59,11 +58,6 @@ export class BusinessLoginComponent {
   async login() {
     const { email, password } = this.loginForm.value;
 
-    // Limpiar mensajes anteriores
-    this.successMessage = null;
-    this.emailErrorMessage = null;
-    this.passwordErrorMessage = null;
-
     if (this.loginForm.valid) {
       try {
         const userCredential: UserCredential = await this.authService.loginWithEmail(email, password);
@@ -87,8 +81,11 @@ export class BusinessLoginComponent {
           }
         });
 
-        this.successMessage = 'Inicio de sesión exitoso';
+        // Mostrar mensaje de éxito con ToastService
+        const fullName = userData?.profileData?.personalData?.fullName || 'Usuario';
+        this.toastService.show(`Bienvenido ${fullName}`, 'success', 5000);
 
+        // Redirigir según el rol
         setTimeout(() => {
           const role = userData.metadata?.role || 'business';
           if (role === 'admin') {
@@ -96,7 +93,7 @@ export class BusinessLoginComponent {
           } else {
             this.router.navigate(['/business']);
           }
-        }, 3000);
+        }, 500);
       } catch (error: any) {
         console.error(error);
 
@@ -106,18 +103,14 @@ export class BusinessLoginComponent {
           'auth/user-disabled': 'Tu cuenta ha sido deshabilitada.',
           'auth/user-not-found': 'No se encontró una cuenta con este correo.',
           'auth/wrong-password': 'Contraseña incorrecta.',
+          'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde.',
         };
 
         const message = errorMessages[error.code] || '¡Ocurrió un error inesperado!';
-
-        if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
-          this.emailErrorMessage = message;
-        } else if (error.code === 'auth/wrong-password') {
-          this.passwordErrorMessage = message;
-        } else {
-          this.emailErrorMessage = message;
-        }
+        this.toastService.show(message, 'error', 5000);
       }
+    } else {
+      this.toastService.show('Por favor completa el formulario correctamente', 'error', 5000);
     }
   }
 }

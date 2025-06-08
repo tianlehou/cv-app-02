@@ -8,10 +8,10 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
 import { SkillsInfoComponent } from './skills-info/skills-info.component';
-import { ToastService } from '../../../../../../../../../shared/services/toast.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 
 @Component({
@@ -39,7 +39,7 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
     private toastService: ToastService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -78,7 +78,6 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
       if (skillsData && skillsData.length > 0) {
         this.populateSkills(skillsData);
       } else {
-        // Si no hay datos, mantener el grupo por defecto
         this.skillsArray.clear();
         this.skillsArray.push(this.createSkillGroup());
       }
@@ -96,36 +95,48 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
 
     skills.forEach(skill => {
       formArray.push(this.fb.group({
-        hardSkills: [skill.hardSkills || ''],
+        hardSkills: [skill.hardSkills || '', Validators.required],
         softSkills: [skill.softSkills || ''],
         languages: [skill.languages || ''],
         certification: [skill.certification || '']
       }));
     });
 
-    // Si no hay habilidades, agregar un grupo vacío
     if (skills.length === 0) {
       formArray.push(this.createSkillGroup());
     }
   }
 
-  toggleEdit(field: string): void {
+  toggleEdit(field: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const wasEditing = this.editableFields[field];
     this.editableFields[field] = !this.editableFields[field];
 
-    if (this.editableFields[field]) {
-      this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
+
+    if (!wasEditing) {
+      this.toastService.show('Modo edición habilitado', 'info');
+      this.initialFormValue = JSON.parse(
+        JSON.stringify(this.profileForm.getRawValue())
+      );
       this.formHasChanges = false;
 
       this.formSubscription = this.profileForm.valueChanges.subscribe(() => {
         this.formHasChanges = !this.areObjectsEqual(
           this.initialFormValue,
-          this.profileForm.value
+          this.profileForm.getRawValue()
         );
       });
-
-      this.toastService.show('Modo edición habilitado', 'info');
     } else {
-      this.onCancel();
+      this.onSubmit().then(() => {
+        this.toastService.show('Datos actualizados exitosamente', 'success');
+      });
     }
   }
 
@@ -133,37 +144,61 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 
-  async onSubmit(): Promise<void> {
-    if (!this.userEmail) {
-      this.toastService.show('Usuario no autenticado', 'error');
+  async onSubmit(event?: Event): Promise<void> {
+    if (event) {
+      event.preventDefault();
+    }
+    if (!this.profileForm.valid || !this.userEmail) {
+      this.toastService.show('Debes completar los campos requeridos.', 'error');
       return;
     }
 
     try {
-      const skillsData = this.skillsArray.value;
+      const userData = await this.firebaseService.getUserData(this.userEmail);
+      const currentProfileData = userData?.profileData || {};
+
+      const updatedProfileData = {
+        ...currentProfileData,
+        skills: this.skillsArray.value,
+      };
 
       await this.firebaseService.updateUserData(this.userEmail, {
-        profileData: {
-          skills: skillsData
-        }
+        profileData: updatedProfileData,
       });
 
-      this.toastService.show('Habilidades actualizadas correctamente', 'success');
+      await this.loadUserData();
       this.editableFields['skills'] = false;
     } catch (error) {
-      console.error('Error al guardar:', error);
-      this.toastService.show('Error al guardar las habilidades', 'error');
+      console.error('Error al actualizar las habilidades:', error);
+      this.toastService.show(
+        'Error al guardar los datos. Por favor, inténtalo nuevamente.',
+        'error'
+      );
     }
-  }
-
-  onCancel(): void {
-    this.editableFields['skills'] = false;
-    this.profileForm.patchValue(this.initialFormValue);
-    this.formHasChanges = false;
-    this.toastService.show('Cambios cancelados', 'info');
   }
 
   get skillsArray(): FormArray {
     return this.profileForm.get('skills') as FormArray;
+  }
+
+  addSkillGroup(): void {
+    const skillGroup = this.createSkillGroup();
+    this.skillsArray.push(skillGroup);
+    this.toastService.show(
+      'Se ha agregado un nuevo grupo de habilidades',
+      'success'
+    );
+  }
+
+  onCancel(): void {
+    this.editableFields['skills'] = false;
+    this.loadUserData();
+    this.formHasChanges = false;
+
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
+    this.toastService.show('Modo edición deshabilitado', 'info');
   }
 }

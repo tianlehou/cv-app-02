@@ -52,31 +52,32 @@ export class BusinessDashboardComponent implements OnInit {
         const metadataSnapshot = await get(metadataRef);
         const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
 
-        // Asegurar que los campos básicos existan
-        return {
-          key: userKey,
-          fullName: userData?.profileData?.personalData?.fullName || '',
-          email: metadata.email || '',
-          profesion: userData?.profileData?.personalData?.profesion || '',
-          role: metadata.role || 'candidate',
-          isSubscribed: metadata?.subscriptionStatus > 0,
-          enabled: metadata.enabled !== undefined ? metadata.enabled : true,
-          // Asegurar que la estructura multimedia viene completa
-          profileData: {
-            ...userData?.profileData,
-            multimedia: {
-              ...userData?.profileData?.multimedia,
-              picture: {
-                profilePicture: userData?.profileData?.multimedia?.picture?.profilePicture || null
+        // Solo procesar usuarios con rol 'candidate'
+        if (metadata.role === 'candidate') {
+          return {
+            key: userKey,
+            country: metadata.country || '',
+            fullName: userData?.profileData?.personalData?.fullName || '',
+            email: metadata.email || '',
+            profesion: userData?.profileData?.personalData?.profesion || '',
+            role: metadata.role || 'candidate',
+            profileData: {
+              ...userData?.profileData,
+              multimedia: {
+                ...userData?.profileData?.multimedia,
+                picture: {
+                  profilePicture: userData?.profileData?.multimedia?.picture?.profilePicture || null
+                }
               }
-            }
-          },
-          createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
-          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null,
-        };
+            },
+          };
+        }
+        return null; // Retornar null para usuarios no candidatos
       });
 
-      this.users = await Promise.all(userPromises);
+      const allUsers = await Promise.all(userPromises);
+      // Filtrar los nulls (usuarios no candidatos)
+      this.users = allUsers.filter(user => user !== null);
     }
 
     this.applyFilters();
@@ -84,17 +85,19 @@ export class BusinessDashboardComponent implements OnInit {
 
   updateStats() {
     this.totalUsers = this.users.length;
-    this.totalBusiness = this.users.filter(u => u.role === 'business').length;
-    this.totalCandidates = this.users.filter(u => u.role === 'candidate').length;
+    this.totalBusiness = 0;
+    this.totalCandidates = this.users.length;
   }
 
   applyFilters() {
+    const normalize = (str: string) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+
     this.filteredUsers = this.users.filter(user => {
-      const matchesType = this.userTypeFilter === 'all' ||
-        user.role === this.userTypeFilter;
-      const matchesSearch = user.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.fullName?.toLowerCase().includes(this.searchQuery.toLowerCase());
-      return matchesType && matchesSearch;
+      const searchTerm = normalize(this.searchQuery);
+      const userProfesion = user.profesion ? normalize(user.profesion) : '';
+      return userProfesion.includes(searchTerm);
     });
     this.currentPage = 1;
     this.updateStats();
@@ -125,10 +128,9 @@ export class BusinessDashboardComponent implements OnInit {
     this.applyFilters();
   }
 
-  onFiltersApplied(filters: { userTypeFilter: string; searchQuery: string }) {
-    this.userTypeFilter = filters.userTypeFilter;
-    this.searchQuery = filters.searchQuery;
-    this.applyFilters(); // Tu método existente que filtra los usuarios
+  onFiltersApplied(searchQuery: string) {
+    this.searchQuery = searchQuery;
+    this.applyFilters();
   }
 
   // Método para manejar el cambio de estado

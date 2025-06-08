@@ -1,14 +1,9 @@
 <div class="filters">
-    <select [(ngModel)]="userTypeFilter">
-        <option value="all">Todos</option>
-        <option value="candidate">Candidatos</option>
-        <option value="company">Empresas</option>
-    </select>
     <div class="search-container">
         <input 
             type="text" 
             [(ngModel)]="searchQuery" 
-            placeholder="Buscar por nombre o email"
+            placeholder="Buscar por profesión"
             (keyup.enter)="applyFilters()"
         >
         <span class="search-icon" (click)="applyFilters()">

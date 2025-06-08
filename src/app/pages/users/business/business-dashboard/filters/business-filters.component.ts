@@ -10,18 +10,11 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./business-filters.component.css']
 })
 export class BusinessFiltersComponent {
-  @Input() userTypeFilter: string = 'all';
   @Input() searchQuery: string = '';
   
-  @Output() filtersApplied = new EventEmitter<{
-    userTypeFilter: string;
-    searchQuery: string;
-  }>();
+  @Output() filtersApplied = new EventEmitter<string>();
 
   applyFilters() {
-    this.filtersApplied.emit({
-      userTypeFilter: this.userTypeFilter,
-      searchQuery: this.searchQuery
-    });
+    this.filtersApplied.emit(this.searchQuery);
   }
 }

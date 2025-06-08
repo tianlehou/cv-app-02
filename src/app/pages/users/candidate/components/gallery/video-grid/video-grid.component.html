@@ -1,34 +1,41 @@
 <!-- video-grid.component.html -->
 <div class="top-row" *ngIf="!readOnly">
-    <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
+    <app-video-info-bar 
+        [videoUrls]="state.userVideos" 
+        (totalSizeCalculated)="state.totalUploadedMB = $event">
+    </app-video-info-bar>
     <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
-        (fileSelected)="handleFileSelected($event)">
+        (uploadComplete)="handleUploadComplete($event)" (uploadProgress)="handleUploadProgress($event)">
     </app-video-upload-button>
 </div>
 
 <!-- Upload Progress -->
-<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null" [uploadProgress]="state.uploadProgress"
-    [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
+<app-video-upload-progress-bar
+    *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
+    [uploadProgress]="state.uploadProgress"
+    [uploadedSize]="state.uploadedSize"
+    [totalSize]="state.totalSize">
 </app-video-upload-progress-bar>
 
+<!-- Videos Grid -->
 <div class="gallery-grid">
-    <!-- Videos Grid -->
     <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
         [ngClass]="{'expanded': state.expandedStates[video]}">
-        <video controls #videoPlayer>
+        <video controls controlsList="nodownload" #videoPlayer>
             <source [src]="video" type="video/mp4">
             Tu navegador no soporta videos.
         </video>
         <button class="toggle-button" (click)="toggleExpansion(video)">
             <i class="fas" [ngClass]="state.expandedStates[video] ? 'fa-compress' : 'fa-expand'"></i>
         </button>
-        <button class="delete-button" (click)="confirmDeleteVideo(video)">
+        <button *ngIf="!readOnly" class="delete-button" (click)="confirmDeleteVideo(video)">
             <i class="fas fa-trash"></i>
         </button>
     </div>
 
     <!-- Empty State Message -->
-    <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0"></app-video-empty-gallery-message>
+    <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0">
+    </app-video-empty-gallery-message>
 
     <!-- Loading State -->
     <div *ngIf="state.isLoading" class="loading-spinner">
